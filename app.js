@@ -184,6 +184,7 @@ app.use(express.static(path.join(__dirname, 'css')));
 //app.use(express.static(path.join(__dirname, 'assets')));
 app.use(express.static(path.join(__dirname, 'img')));
 app.use(express.static(path.join(__dirname, 'html')));
+app.use(express.static(path.join(__dirname, 'js')));
 console.log('Servindo arquivos estáticos a partir da pasta public');
 
 
