@@ -181,7 +181,7 @@ app.post('/verify-token', (req, res) => {
 
 // Servir arquivos estáticos (CSS, imagens, etc.)
 app.use(express.static(path.join(__dirname, 'css')));
-//app.use(express.static(path.join(__dirname, 'assets')));
+app.use(express.static(path.join(__dirname, 'assets')));
 app.use(express.static(path.join(__dirname, 'img')));
 app.use(express.static(path.join(__dirname, 'html')));
 app.use(express.static(path.join(__dirname, 'js')));

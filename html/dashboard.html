@@ -3,46 +3,50 @@
 <head>
   <meta charset="UTF-8">
   <title>Dashboard</title>
-  <link rel='stylesheet' href='https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css'>
-<link rel='stylesheet' href='https://unicons.iconscout.com/release/v3.0.6/css/line.css'><link rel="stylesheet" href="./dashboard.css">
-
+  <link rel='stylesheet' href='https://unicons.iconscout.com/release/v3.0.6/css/line.css'><link rel="stylesheet" href="./dashboard.css">
+  <!-- AdminLTE CSS -->
+<link rel='stylesheet' href='https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css'>
+<link rel="stylesheet" href='https://cdn.jsdelivr.net/npm/admin-lte@3.2.0/dist/css/adminlte.min.css'>
+<!-- Font Awesome -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 </head>
 <body>
 <!-- partial:index.partial.html -->
 <aside class="sidebar position-fixed top-0 left-0 overflow-auto h-100 float-left" id="show-side-navigation1">
   <i class="uil-bars close-aside d-md-none d-lg-none" data-close="show-side-navigation1"></i>
   <div class="sidebar-header d-flex justify-content-center align-items-center px-3 py-4">
-    <img
+    <img id="visit"
          class="rounded-pill img-fluid"
          width="65"
-         src="https://uniim1.shutterfly.com/ng/services/mediarender/THISLIFE/021036514417/media/23148907008/medium/1501685726/enhance"
+         height="65"
+         src="https://cdn-icons-png.flaticon.com/512/2714/2714708.png"
          alt="">
     <div class="ms-2">
       <h5 class="fs-6 mb-0">
-        <a class="text-decoration-none" href="#">Jone Doe</a>
+        <a class="text-decoration-none" href="#">Visitante</a>
       </h5>
-      <p class="mt-1 mb-0">Lorem ipsum dolor sit amet consectetur.</p>
+      <p class="mt-1 mb-0">Leitor do consumo.</p>
     </div>
   </div>
 
-  <div class="search position-relative text-center px-4 py-3 mt-2">
-    <input type="text" class="form-control w-100 border-0 bg-transparent" placeholder="Search here">
+  <!-- <div class="search position-relative text-center px-4 py-3 mt-2"> 
+    <input type="text" class="form-control w-100 border-0 bg-transparent" placeholder="Search here" style="color: aliceblue;">
     <i class="fa fa-search position-absolute d-block fs-6"></i>
-  </div>
+  </div> -->
 
   <ul class="categories list-unstyled">
     <li class="has-dropdown">
       <i class="uil-estate fa-fw"></i><a href="#"> Dashboard</a>
       <ul class="sidebar-dropdown list-unstyled">
-        <li><a href="#">Lorem ipsum</a></li>
-        <li><a href="#">ipsum dolor</a></li>
-        <li><a href="#">dolor ipsum</a></li>
-        <li><a href="#">amet consectetur</a></li>
-        <li><a href="#">ipsum dolor sit</a></li>
+        <li><a href="#">Dados 1</a></li>
+        <li><a href="#">Dados 2</a></li>
+        <li><a href="#">Dados 3</a></li>
+        <li><a href="#">Dados 4</a></li>
+        <li><a href="#">Dados 5</a></li>
       </ul>
     </li>
     <li class="">
-      <i class="uil-folder"></i><a href="#"> File manager</a>
+      <i class="uil-folder"></i><a href="#"> Planilha</a>
     </li>
     <li class="has-dropdown">
       <i class="uil-calendar-alt"></i><a href="#"> Calender</a>
@@ -127,31 +131,31 @@
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#toggle-navbar" aria-controls="toggle-navbar" aria-expanded="false" aria-label="Toggle navigation">
           <i class="uil-bars text-white"></i>
         </button>
-        <a class="navbar-brand" href="#">admin<span class="main-color">kit</span></a>
+        <a class="navbar-brand" href="#"><span class="main-color">365</span>Energy</a>
       </div>
       <div class="collapse navbar-collapse" id="toggle-navbar">
         <ul class="navbar-nav ms-auto">
           <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-              Settings
+            <a class="nav-link dropdown-toggle"  id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              Configurações
             </a>
-            <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+            <ul class="dropdown-menu" aria-labelledby="navbarDropdown" style="padding: 15px; ">
               <li>
-                <a class="dropdown-item" href="#">My account</a>
+                <a class="dropdown-item" href="#">Minha Conta</a>
               </li>
-              <li><a class="dropdown-item" href="#">My inbox</a>
+              <li><a class="dropdown-item" href="#">Minhas Mensagens</a>
               </li>
-              <li><a class="dropdown-item" href="#">Help</a>
+              <li><a class="dropdown-item" href="#">Ajuda</a>
               </li>
               <li><hr class="dropdown-divider"></li>
-              <li><a class="dropdown-item" href="#">Log out</a></li>
+              <li><a class="dropdown-item" href="#">Desconectar</a></li>
             </ul>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="#"><i class="uil-comments-alt"></i><span>23</span></a>
+            <a class="nav-link" href="#"><i class="uil-comments-alt"></i><span>0</span></a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="#"><i class="uil-bell"></i><span>98</span></a>
+            <a class="nav-link" href="#"><i class="uil-bell"></i><span>0</span></a>
           </li>
           <li class="nav-item">
             <a class="nav-link" href="#">
@@ -166,8 +170,8 @@
   <div class="p-4">
     <div class="welcome">
       <div class="content rounded-3 p-3">
-        <h1 class="fs-3">Welcome to Dashboard</h1>
-        <p class="mb-0">Hello Jone Doe, welcome to your awesome dashboard!</p>
+        <h1 class="fs-3">Bem vindo ao Dashboard</h1>
+        <p class="mb-0">Olá Leitor, bem vindo ao seu dashboard!</p>
       </div>
     </div>
 
@@ -214,13 +218,17 @@
         <div class="col-lg-6">
           <div class="chart-container rounded-2 p-3">
             <h3 class="fs-6 mb-3">Chart title number one</h3>
+            <div style="height: 250px; width: 100%;">
             <canvas id="myChart"></canvas>
+            </div>
           </div>
         </div>
         <div class="col-lg-6">
           <div class="chart-container rounded-2 p-3">
             <h3 class="fs-6 mb-3">Chart title number two</h3>
-            <canvas id="myChart2"></canvas>
+            <div style="height: 250px; width: 100%;">
+              <canvas id="myChart2"></canvas>
+            </div> 
           </div>
         </div>
       </div>
@@ -230,43 +238,23 @@
       <div class="row">
         <div class="col-md-6">
           <div class="box">
+            <div class="card card-danger" >
+              <div class="card-body" style="background-color: #313348; border-radius: 5px;">
+                <h3 class="card-title">Donut Chart</h3>
+                <div class="chartjs-size-monitor">
+                  <div class="chartjs-size-monitor-expand">
+                    <div class=""></div>
+                  </div>
+                  <div class="chartjs-size-monitor-shrink">
+                    <div class=""></div>
+                  </div>
+                </div>
+                <canvas id="donutChart" style="min-height: 250px; height: 250px; max-height: 250px; max-width: 100%; display: block; width: 765px;" width="765" height="250" class="chartjs-render-monitor"></canvas>
+              </div>
+              <!-- /.card-body -->
+            </div>
             <!-- <h4>Admins:</h4> -->
-            <div class="admin d-flex align-items-center rounded-2 p-3 mb-4">
-              <div class="img">
-                <img class="img-fluid rounded-pill"
-                     width="75" height="75"
-                     src="https://uniim1.shutterfly.com/ng/services/mediarender/THISLIFE/021036514417/media/23148906966/small/1501685402/enhance"
-                     alt="admin">
-              </div>
-              <div class="ms-3">
-                <h3 class="fs-5 mb-1">Joge Lucky</h3>
-                <p class="mb-0">Lorem ipsum dolor sit amet consectetur elit.</p>
-              </div>
-            </div>
-            <div class="admin d-flex align-items-center rounded-2 p-3 mb-4">
-              <div class="img">
-                <img class="img-fluid rounded-pill"
-                     width="75" height="75"
-                     src="https://uniim1.shutterfly.com/ng/services/mediarender/THISLIFE/021036514417/media/23148907137/small/1501685404/enhance"
-                     alt="admin">
-              </div>
-              <div class="ms-3">
-                <h3 class="fs-5 mb-1">Joge Lucky</h3>
-                <p class="mb-0">Lorem ipsum dolor sit amet consectetur elit.</p>
-              </div>
-            </div>
-            <div class="admin d-flex align-items-center rounded-2 p-3">
-              <div class="img">
-                <img class="img-fluid rounded-pill"
-                     width="75" height="75"
-                     src="https://uniim1.shutterfly.com/ng/services/mediarender/THISLIFE/021036514417/media/23148907019/small/1501685403/enhance"
-                     alt="admin">
-              </div>
-              <div class="ms-3">
-                <h3 class="fs-5 mb-1">Joge Lucky</h3>
-                <p class="mb-0">Lorem ipsum dolor sit amet consectetur elit.</p>
-              </div>
-            </div>
+
           </div>
         </div>
         <div class="col-md-6">
@@ -346,19 +334,40 @@
       </div>
     </section>
 
+
+    
+    
     <section class="charts mt-4">
-      <div class="chart-container p-3">
-        <h3 class="fs-6 mb-3">Chart title number three</h3>
-        <div style="height: 300px">
-          <canvas id="chart3" width="100%"></canvas>
+        <div class="chart-container p-3" style="width: 100%;">
+          <h3 class="fs-6 mb-3">Chart title number three</h3>
+          <div style="height: 300px; width: 100% ;">
+            <canvas id="chart3" ></canvas>
+          </div>
         </div>
-      </div>
     </section>
+    
+    
+
   </div>
 </section>
-<!-- partial -->
-  <script src='https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.bundle.js'></script>
-<script src='https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.bundle.min.jshttps://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.bundle.min.js'></script><script  src="./dashboard.js"></script>
 
+<!-- partial -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.bundle.js"></script>
+  
+  <script  src="./dashboard.js"></script>
+
+  <!-- jQuery -->
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  
+  <!-- Bootstrap (depende de jQuery) -->
+  <script src='https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.bundle.min.js'></script>
+
+<!-- AdminLTE -->
+<script src="https://cdn.jsdelivr.net/npm/admin-lte@3.2.0/dist/js/adminlte.min.js"></script>
+<script>
+  console.log(bootstrap);
+
+  
+</script>
 </body>
 </html>

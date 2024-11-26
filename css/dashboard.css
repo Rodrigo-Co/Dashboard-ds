@@ -5,7 +5,7 @@
 	--dk-gray-200: #E5E7EB;
 	--dk-gray-300: #D1D5DB;
 	--dk-gray-400: #9CA3AF;
-	--dk-gray-500: #6B7280;
+	--dk-gray-500: #6B7280; 
 	--dk-gray-600: #4B5563;
 	--dk-gray-700: #374151;
 	--dk-gray-800: #1F2937;
@@ -332,12 +332,11 @@ body {
 .dropdown-menu>li>a {
 	padding-top: 5px !important;
 	padding-right: 5px !important;
+	margin-left: -10px !important;
 }
 .navbar .navbar-nav>li>a>i {
 	font-size: 18px !important;
 }
-
-
 
 
 /* Start media query */
@@ -377,3 +376,12 @@ body {
 ::-webkit-scrollbar-thumb:hover {
 	background-color: rgba(0, 0, 0, 0.3);
 }
+
+/* Css adapt */
+#visit {
+	filter: brightness(0) invert(90%);
+  }
+  #chart3 {
+	width: 100% !important ;
+	height: 100% !important; /* Isso faz com que o gráfico preencha a altura do contêiner */
+  }
