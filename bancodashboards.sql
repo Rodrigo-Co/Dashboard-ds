@@ -9,3 +9,4 @@ senha varchar(70) not null,
 resetPasswordToken VARCHAR(255),
 resetPasswordExpires DATETIME
 );
+

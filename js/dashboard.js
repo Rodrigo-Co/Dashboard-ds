@@ -23,6 +23,8 @@ function siblings(el) {
   return siblings
 }
 
+let chartData = {}; // Variável global para armazenar os dados
+
 const showAsideBtn = document.querySelector('.show-side-btn'); // Seletor DOM nativo
 const sidebar = document.querySelector('.sidebar'); // Seletor DOM nativo
 const wrapper = document.querySelector('#wrapper'); // Seletor DOM nativo
@@ -55,12 +57,15 @@ window.addEventListener('resize', function () {
 var slideNavDropdown = $('.sidebar-dropdown');
 
 $('.sidebar .categories').addEventListener('click', function (event) {
-  event.preventDefault()
-
   const item = event.target.closest('.has-dropdown')
 
+  // Verifica se o item clicado é o link de upload
+  if (event.target.id === 'uploadTrigger') {
+    return; // Se for o link de upload, ignore o processamento do menu dropdown
+  }
+
   if (! item) {
-    return
+    return;
   }
 
   item.classList.toggle('opened')
@@ -86,7 +91,7 @@ $('.sidebar .categories').addEventListener('click', function (event) {
   } else {
     find(item, '.sidebar-dropdown').classList.toggle('active')
   }
-})
+});
 
 $('.sidebar .close-aside').addEventListener('click', function () {
   $(`#${this.dataset.close}`).classList.add('show-sidebar')
@@ -126,8 +131,8 @@ Chart.defaults.global.elements.point.radius = 0
 Chart.defaults.global.responsive = true
 Chart.defaults.global.maintainAspectRatio = false
 
-let chart, chart2, myChartM, myChartD;
-initCharts();
+let chart;
+let chart2, myChartM, myChartD;
 
 // Função para atualizar todos os gráficos
 function updateCharts() {
@@ -147,7 +152,7 @@ function updateCharts() {
   }
 
   // Verifica e atualiza o gráfico myChart
-  if (chart3) {
+  if (myChartM) {
     myChartM.update();
     myChartM.resize();
     console.log('Chart 3 Atualizada')
@@ -161,225 +166,282 @@ function updateCharts() {
   }
 }
 
-function initCharts() {
-  // The bar chart
-  chart = new Chart(document.getElementById('myChart'), {
-    type: 'bar',
-    data: {
-      labels: ["January", "February", "March", "April", 'May', 'June', 'August', 'September'],
-      datasets: [{
-        label: "Lost",
-        data: [45, 25, 40, 20, 60, 20, 35, 25],
-        backgroundColor: "#0d6efd",
-        borderColor: 'transparent',
-        borderWidth: 2.5,
-        barPercentage: 0.4,
-      }, {
-        label: "Success",
-        startAngle: 2,
-        data: [20, 40, 20, 50, 25, 40, 25, 10],
-        backgroundColor: "#dc3545",
-        borderColor: 'transparent',
-        borderWidth: 2.5,
-        barPercentage: 0.4,
-      }]
-    },
-    options: {
-      legend: {
-        display: true, // Exibe a legenda
-        position: 'top', // Define a posição da legenda
-        labels: {
-          boxWidth: 20, // Define o tamanho da legenda
-          fontSize: 14, // Define o tamanho da fonte da legenda
-          padding: 10, // Define o espaçamento da legenda
-          fontColor: '#FFF', // Cor do texto da legenda
-          usePointStyle: false // Estilo de ponto (opcional)
+document.addEventListener('DOMContentLoaded', function () {
+  const uploadTrigger = document.getElementById('uploadTrigger');
+  const fileInput = document.getElementById('fileInput');
+
+  // Objeto para armazenar instâncias dos gráficos
+  const charts = {};
+
+  // Função para buscar e processar o arquivo retornado
+  function fetchUploadedFile() {
+    fetch('/uploaded-file')
+      .then(response => {
+        if (response.ok) {
+          return response.blob(); // A resposta será um Blob (arquivo binário)
+        } else {
+          throw new Error('Nenhum arquivo encontrado');
         }
-      },
-      scales: {
-        yAxes: [{
-          gridLines: {},
-          ticks: {
-            stepSize: 15,
-          },
-        }],
-        xAxes: [{
-          gridLines: {
-            display: false,
-          }
-        }]
-      }
+      })
+      .then(blob => {
+        // Usando a biblioteca XLSX para ler o arquivo binário
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          const data = e.target.result;
+          const workbook = XLSX.read(data, { type: 'binary' });
+
+          // Processa a primeira aba do arquivo Excel
+          const sheetName = workbook.SheetNames[0];
+          const sheetData = XLSX.utils.sheet_to_json(workbook.Sheets[sheetName]);
+
+          // Converte os dados para o formato que o gráfico espera
+          const chart1Data = {
+            labels: sheetData.map(row => row.Mês), // Exemplo de coluna "Mês"
+            datasets: [{
+              label: "Gastos",
+              data: sheetData.map(row => row.Gastos), // Exemplo de coluna "Gastos"
+              backgroundColor: "#0d6efd",
+              borderColor: 'transparent',
+              borderWidth: 2.5,
+              barPercentage: 0.4,
+            }, {
+              label: "Economia",
+              startAngle: 2,
+              data: sheetData.map(row => row.Economia), // Exemplo de coluna "Economia"
+              backgroundColor: "#dc3545",
+              borderColor: 'transparent',
+              borderWidth: 2.5,
+              barPercentage: 0.4,
+            }]
+          };
+
+          const chart2Data = {
+            labels: sheetData.map(row => row.Mês),
+            datasets: [{
+              label: "Tomadas",
+              data: sheetData.map(row => row.Tomadas),
+              backgroundColor: "#dc3545",
+              borderColor: 'transparent',
+              borderWidth: 2.5,
+              barPercentage: 0.4,
+            },{
+              label: "Lâmpadas",
+              data: sheetData.map(row => row.Lampadas),
+              backgroundColor: 'transparent',
+              borderColor: '#dc3545',
+              lineTension: .4,
+              borderWidth: 1.5,
+            }]
+          };
+          const chart3Data = {
+            labels: sheetData.map(row => row.Mês),
+            datasets: [{
+              label: "2023",
+              data: sheetData.map(row => row.y2023),
+              lineTension: 0.2,
+              borderColor: '#d9534f',
+              borderWidth: 1.5,
+              showLine: true,
+              backgroundColor: 'transparent'
+            },{
+              label: "2022",
+              data: sheetData.map(row => row.y2022),
+              lineTension: 0.2,
+              borderColor: '#d9534f',
+              borderWidth: 1.5,
+              showLine: true,
+              backgroundColor: 'transparent'
+            },{
+              label: "2021",
+              data: sheetData.map(row => row.y2021),
+              lineTension: 0.2,
+              borderColor: '#d9534f',
+              borderWidth: 1.5,
+              showLine: true,
+              backgroundColor: 'transparent'
+            },{
+              label: "2020",
+              data: sheetData.map(row => row.y2020),
+              lineTension: 0.2,
+              borderColor: '#d9534f',
+              borderWidth: 1.5,
+              showLine: true,
+              backgroundColor: 'transparent'
+            }
+          ]
+          };
+          const chart4Data = {
+            labels: sheetData.map(row => row.Estações),
+            datasets: [{
+              label: "Verão",
+              data: sheetData.map(row => row.Verão),
+              backgroundColor: [
+                'rgba(255, 99, 132, 0.6)',
+                'rgba(54, 162, 235, 0.6)',
+                'rgba(255, 206, 86, 0.6)',
+                'rgba(75, 192, 192, 0.6)'
+              ],
+              borderColor: [
+                'rgba(255, 99, 132, 1)',
+                'rgba(54, 162, 235, 1)',
+                'rgba(255, 206, 86, 1)',
+                'rgba(75, 192, 192, 1)'
+              ],
+              borderWidth: 1
+            },{
+              label: "Outono",
+              data: sheetData.map(row => row.Outono),
+              backgroundColor: [
+                'rgba(255, 99, 132, 0.6)',
+                'rgba(54, 162, 235, 0.6)',
+                'rgba(255, 206, 86, 0.6)',
+                'rgba(75, 192, 192, 0.6)'
+              ],
+              borderColor: [
+                'rgba(255, 99, 132, 1)',
+                'rgba(54, 162, 235, 1)',
+                'rgba(255, 206, 86, 1)',
+                'rgba(75, 192, 192, 1)'
+              ],
+              borderWidth: 1
+            },{
+              label: "Inverno",
+              data: sheetData.map(row => row.Inverno),
+              backgroundColor: [
+                'rgba(255, 99, 132, 0.6)',
+                'rgba(54, 162, 235, 0.6)',
+                'rgba(255, 206, 86, 0.6)',
+                'rgba(75, 192, 192, 0.6)'
+              ],
+              borderColor: [
+                'rgba(255, 99, 132, 1)',
+                'rgba(54, 162, 235, 1)',
+                'rgba(255, 206, 86, 1)',
+                'rgba(75, 192, 192, 1)'
+              ],
+              borderWidth: 1
+            },{
+              label: "Primavera",
+              data: sheetData.map(row => row.Primavera),
+              backgroundColor: [
+                'rgba(255, 99, 132, 0.6)',
+                'rgba(54, 162, 235, 0.6)',
+                'rgba(255, 206, 86, 0.6)',
+                'rgba(75, 192, 192, 0.6)'
+              ],
+              borderColor: [
+                'rgba(255, 99, 132, 1)',
+                'rgba(54, 162, 235, 1)',
+                'rgba(255, 206, 86, 1)',
+                'rgba(75, 192, 192, 1)'
+              ],
+              borderWidth: 1
+            }]
+          };
+
+          // Atualiza o gráfico com os dados processados
+          //updateChart(chartData); // Função para atualizar o gráfico com novos dados
+          // Atualiza o gráfico com os dados processados
+          initChart('myChart', chart1Data, 'bar'); // Chama a função de inicialização
+          initChart('myChart2', chart2Data, 'line'); // Chama a função de inicialização
+          initChart('chart3', chart3Data, 'line'); // Chama a função de inicialização
+          initChart('donutChart', chart4Data, 'doughnut'); // Chama a função de inicialização
+        };
+        reader.readAsBinaryString(blob);
+      })
+      .catch(error => {
+        console.error('Erro ao buscar arquivo:', error);
+      });
+  }
+
+   // Função genérica para inicializar gráficos
+  function initChart(chartId, chartData, chartType) {
+    const ctx = document.getElementById(chartId);
+    if (!ctx) {
+      console.error(`Canvas com ID "${chartId}" não encontrado.`);
+      return;
     }
-  });
-  
-  // The line chart
-  chart2 = new Chart(document.getElementById('myChart2'), {
-    type: 'line',
-    data: {
-      labels: ["January", "February", "March", "April", 'May', 'June', 'August', 'September'],
-      datasets: [{
-        label: "My First dataset",
-        data: [4, 20, 5, 20, 5, 25, 9, 18],
-        backgroundColor: 'transparent',
-        borderColor: '#0d6efd',
-        lineTension: .4,
-        borderWidth: 1.5,
-      }, {
-        label: "Month",
-        data: [11, 25, 10, 25, 10, 30, 14, 23],
-        backgroundColor: 'transparent',
-        borderColor: '#dc3545',
-        lineTension: .4,
-        borderWidth: 1.5,
-      }, {
-        label: "Month",
-        data: [16, 30, 16, 30, 16, 36, 21, 35],
-        backgroundColor: 'transparent',
-        borderColor: '#f0ad4e',
-        lineTension: .4,
-        borderWidth: 1.5,
-      }]
-    },
-    options: {
-      legend: {
-        display: true, // Exibe a legenda
-        position: 'top', // Define a posição da legenda
-        labels: {
-          boxWidth: 20, // Define o tamanho da legenda
-          fontSize: 14, // Define o tamanho da fonte da legenda
-          padding: 10, // Define o espaçamento da legenda
-          fontColor: '#FFF', // Cor do texto da legenda
-          usePointStyle: false // Estilo de ponto (opcional)
-        }
-      },
-      scales: {
-        yAxes: [{
-          gridLines: {
-            drawBorder: false
-          },
-          ticks: {
-            stepSize: 12,
-          }
-        }],
-        xAxes: [{
-          gridLines: {
-            display: false,
-          },
-        }]
-      }
-    }
-  });
-  
-  
-  myChartM =  new Chart(document.getElementById('chart3'), {
-    type: 'line',
-    data: {
-      labels: ["One", "Two", "Three", "Four", "Five", 'Six', "Seven", "Eight"],
-      datasets: [{
-        label: "Red",
-        lineTension: 0.2,
-        borderColor: '#d9534f',
-        borderWidth: 1.5,
-        showLine: true,
-        data: [1, 32, 19, 33, 18, 39, 20, 42, 20, 30],
-        backgroundColor: 'transparent'
-      }, {
-        label: "Green",
-        lineTension: 0.2,
-        borderColor: '#5cb85c',
-        borderWidth: 1.5,
-        data: [6, 20, 5, 20, 5, 25, 9, 18, 20, 15],
-        backgroundColor: 'transparent'
-      },
-                 {
-                   label: "Yellow",
-                   lineTension: 0.2,
-                   borderColor: '#f0ad4e',
-                   borderWidth: 1.5,
-                   data: [12, 20, 15, 20, 5, 35, 10, 15, 35, 25],
-                   backgroundColor: 'transparent'
-                 },
-                 {
-                   label: "Blue",
-                   lineTension: 0.2,
-                   borderColor: '#337ab7',
-                   borderWidth: 1.5,
-                   data: [16, 25, 10, 25, 10, 30, 14, 23, 14, 29],
-                   backgroundColor: 'transparent'
-                 }]
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-    legend: {
-      display: true, // Exibe a legenda
-      position: 'top', // Define a posição da legenda
-      labels: {
-        boxWidth: 20, // Define o tamanho da legenda
-        fontSize: 14, // Define o tamanho da fonte da legenda
-        padding: 10, // Define o espaçamento da legenda
-        fontColor: '#FFF', // Cor do texto da legenda
-        usePointStyle: false // Estilo de ponto (opcional)
-      }
-    },
-      scales: {
-        yAxes: [{
-          gridLines: {
-            drawBorder: false
-          },
-          ticks: {
-            stepSize: 12
-          }
-        }],
-        xAxes: [{
-          gridLines: {
-            display: false,
-          },
-        }],
-      }
-    }
-  });
-  
-  myChartD = new Chart(document.getElementById('donutChart').getContext('2d'), {
-        type: 'doughnut',
-        data: {
-          labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
-          datasets: [{
-            data: [12, 19, 3, 5, 2, 3],
-            backgroundColor: [
-              'rgba(255, 99, 132, 0.6)',
-              'rgba(54, 162, 235, 0.6)',
-              'rgba(255, 206, 86, 0.6)',
-              'rgba(75, 192, 192, 0.6)',
-              'rgba(153, 102, 255, 0.6)',
-              'rgba(255, 159, 64, 0.6)'
-            ],
-            borderColor: [
-              'rgba(255, 99, 132, 1)',
-              'rgba(54, 162, 235, 1)',
-              'rgba(255, 206, 86, 1)',
-              'rgba(75, 192, 192, 1)',
-              'rgba(153, 102, 255, 1)',
-              'rgba(255, 159, 64, 1)'
-            ],
-            borderWidth: 1
-          }]
-        },
+
+    // Verifica se já existe um gráfico associado ao ID
+    if (charts[chartId]) {
+      charts[chartId].data = chartData;
+      charts[chartId].type = chartType; // Atualiza o tipo se necessário
+      charts[chartId].update();
+    } else {
+      // Cria um novo gráfico
+      charts[chartId] = new Chart(ctx, {
+        type: chartType,
+        data: chartData,
         options: {
-          maintainAspectRatio: false,
           responsive: true,
           legend: {
-          display: true, // Exibe a legenda
-          position: 'top', // Define a posição da legenda
-          labels: {
-          boxWidth: 20, // Define o tamanho da legenda
-          fontSize: 14, // Define o tamanho da fonte da legenda
-          padding: 15, // Define o espaçamento da legenda
-          fontColor: '#FFF', // Cor do texto da legenda
-          usePointStyle: true // Estilo de ponto (opcional)
-      }
-    },
-        }
+            display: true,
+            position: 'top',
+            labels: {
+              boxWidth: 20,
+              fontSize: 14,
+              padding: 10,
+              fontColor: '#FFF',
+              usePointStyle: false,
+            },
+          },
+          scales: chartType === 'bar' || chartType === 'line' ? {
+            x: {
+              grid: {
+                display: false,
+              },
+            },
+            y: {
+              grid: {
+                display: true,
+              },
+            },
+          } : {},
+        } 
       });
-  
-}
+    }
+  }
+  // Chama a função para buscar o arquivo na pasta
+  fetchUploadedFile();
+
+  // Abre a janela de arquivos quando o link for clicado
+  uploadTrigger.addEventListener('click', function (event) {
+    event.preventDefault(); // Evita o comportamento padrão do link
+    fileInput.click(); // Simula o clique no input de arquivo
+    console.log('Link clicado!');
+  });
+
+  fileInput.addEventListener('change', function () {
+    if (fileInput.files.length > 0) {
+      const file = fileInput.files[0];
+      const allowedTypes = ['application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'text/csv'];
+
+      if (!allowedTypes.includes(file.type)) {
+        alert('Por favor, envie um arquivo válido (.xlsx ou .csv).');
+        return;
+      }
+
+      const formData = new FormData();
+      formData.append('file', file);
+
+      fetch('/upload', {
+        method: 'POST',
+        body: formData,
+      })
+        .then(response => response.json())
+        .then(data => {
+          alert('Arquivo processado com sucesso!');
+          // Use os dados retornados para atualizar os gráficos
+          initChart('myChart', data.chart1Data, 'bar');
+          initChart('myChart2', data.chart2Data, 'line');
+          initChart('chart3', data.chart3Data, 'line');
+          initChart('donutChart', data.chart4Data, 'doughnut');
+        })
+        .catch(error => {
+          console.error('Erro no upload:', error);
+          alert('Erro ao processar o arquivo.');
+        });
+    }
+  });
+});
+

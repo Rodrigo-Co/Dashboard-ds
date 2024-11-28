@@ -9,6 +9,7 @@ const crypto = require('crypto');
 const bcrypt = require('bcryptjs');
 const multer = require('multer');
 const fs = require('fs'); 
+const XLSX = require('xlsx');
 
 const app = express();
 const port = 3300;
@@ -37,6 +38,19 @@ app.use(session({
     saveUninitialized: true, // Mantém a sessão, mesmo sem modificações
     cookie: { secure: false } // Deve estar como "false" se você estiver testando em HTTP (não HTTPS)
 }));
+
+// Configuração do multer para salvar os arquivos em uma pasta chamada "uploads"
+const upload = multer({ 
+    dest: 'uploads/', // Diretório onde os arquivos serão armazenados temporariamente
+    limits: { fileSize: 10 * 1024 * 1024 }, // Limite de 10MB para os arquivos
+    fileFilter: (req, file, cb) => {
+      const ext = path.extname(file.originalname);
+      if (ext !== '.xlsx' && ext !== '.csv') {
+        return cb(new Error('Apenas arquivos .xlsx ou .csv são permitidos.'));
+      }
+      cb(null, true);
+    }
+  });
 
 app.get('/user/profile', (req, res) => {
     // Verifique se o usuário está logado
@@ -69,115 +83,98 @@ app.get('/user/profile', (req, res) => {
     });
 });
 
-// Rota para enviar o token de redefinição de senha
-/*app.post('/send-password-reset', (req, res) => {
-    const { email } = req.body;
-
-    if (!email) {
-        return res.status(400).send('E-mail é necessário');
+// Endpoint para upload e processamento de planilha
+app.post('/upload', upload.single('file'), (req, res) => {
+    const filePath = req.file.path;
+  
+    try {
+      const workbook = XLSX.readFile(filePath);
+      const sheetName = workbook.SheetNames[0]; // Considera a primeira aba
+      const sheetData = XLSX.utils.sheet_to_json(workbook.Sheets[sheetName]);
+  
+      // Assumindo que a planilha contém colunas específicas para cada gráfico
+      const dataForCharts = {
+        chart: {
+          labels: sheetData.map(row => row.Mês), // Exemplo de coluna "Mês"
+          datasets: [{
+            label: "Gastos",
+            data: sheetData.map(row => row.Gastos), // Exemplo de coluna "Gastos"
+            backgroundColor: "#0d6efd",
+            borderColor: 'transparent',
+            borderWidth: 2.5,
+            barPercentage: 0.4,
+          }, {
+            label: "Economia",
+            startAngle: 2,
+            data: sheetData.map(row => row.Economia), // Exemplo de coluna "Economia"
+            backgroundColor: "#dc3545",
+            borderColor: 'transparent',
+            borderWidth: 2.5,
+            barPercentage: 0.4,
+          }]
+        }
+        /*
+        ,
+        chart2: {
+          labels: sheetData.map(row => row.Item), // Exemplo de coluna "Item"
+          datasets: [{
+            label: "Consumo",
+            data: sheetData.map(row => row.Consumo), // Exemplo de coluna "Consumo"
+            backgroundColor: "#f0ad4e",
+          }]
+        },
+        myChartM: {
+          labels: sheetData.map(row => row.Mês),
+          datasets: [{
+            label: "Gastos no Ano",
+            data: sheetData.map(row => row['Gastos Ano']), // Exemplo de coluna "Gastos Ano"
+            borderColor: "#337ab7",
+            backgroundColor: "transparent",
+          }]
+        },
+        myChartD: {
+          labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
+          datasets: [{
+            data: [12, 19, 3, 5, 2, 3], // Dados fixos ou processados
+            backgroundColor: [
+              'rgba(255, 99, 132, 0.6)',
+              'rgba(54, 162, 235, 0.6)',
+              'rgba(255, 206, 86, 0.6)',
+              'rgba(75, 192, 192, 0.6)',
+              'rgba(153, 102, 255, 0.6)',
+              'rgba(255, 159, 64, 0.6)'
+            ]
+          }]
+        }
+        */
+      };
+  
+      res.json({
+        message: 'Planilha processada com sucesso!',
+        data: dataForCharts,
+      });
+  
+    } catch (error) {
+      console.error('Erro ao processar a planilha:', error);
+      res.status(500).json({ message: 'Erro ao processar a planilha.', error });
     }
+  });
 
-    // Verificar se o email está cadastrado
-    const queryVerificar = 'SELECT * FROM usuario WHERE email = ?';
-    db.query(queryVerificar, [email], (err, results) => {
-        if (err) {
-            throw err;
-        }
-        if (results.length === 0) {
-            return res.status(404).send('E-mail não encontrado.');
-        }
-
-        // Gerar um token aleatório
-        const token = crypto.randomBytes(20).toString('hex');
-        const expiracao = new Date(Date.now() + 3600000); // Token válido por 1 hora
-        console.log('Token enviado:', token);
-        console.log('Token armazenado:', results[0].resetPasswordToken);
-
-        // Inserir o token no banco de dados
-        const queryInsert = 'UPDATE usuario SET resetPasswordToken = ?, resetPasswordExpires = ? WHERE email = ?';
-        db.query(queryInsert, [token, expiracao, email], (err, result) => {
-            if (err) {
-                console.error('Erro ao atualizar o token de redefinição de senha:', err);
-                return res.status(500).json({ message: 'Erro ao processar o pedido de redefinição de senha.' });
-            }
-
-            // Configuração do e-mail
-            const mailOptions = {
-                from: 'ttecnobrasa@gmail.com',
-                to: email,
-                subject: 'Redefinição de senha',
-                text: `Você solicitou uma redefinição de senha. Use o token abaixo para redefinir sua senha:\n\nToken: ${token}\n\nO token é válido por 1 hora.`
-            };
-
-            // Enviar o e-mail
-            transporter.sendMail(mailOptions, (error, info) => {
-                if (error) {
-                    console.error('Erro ao enviar o e-mail:', error);
-                    return res.status(500).send('Erro ao enviar o e-mail');
-                }
-                console.log('E-mail enviado:', info.response);
-                res.status(200).send('E-mail de redefinição enviado com sucesso');
-            });
-        });
-    });
+// Endpoint para buscar o arquivo da pasta de uploads
+app.get('/uploaded-file', (req, res) => {
+    const uploadFolder = path.join(__dirname, 'uploads');
+    const files = fs.readdirSync(uploadFolder);
+    
+    if (files.length > 0) {
+        // Se houver arquivos na pasta, envia o primeiro arquivo encontrado
+        const filePath = path.join(uploadFolder, files[0]);
+         // Configurar cabeçalhos para enviar o arquivo binário corretamente
+         //res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        res.sendFile(filePath);
+    } else {
+        res.status(404).json({ message: 'Nenhum arquivo encontrado na pasta de uploads.' });
+    }
 });
-
-// Rota para verificar o token
-app.post('/verify-token', (req, res) => {
-    const { email, token } = req.body;
-
-    const query = 'SELECT * FROM usuario WHERE email = ? AND resetPasswordToken = ? AND resetPasswordExpires > ?';
-    db.query(query, [email, token, Date.now()], (err, results) => {
-        if (err) {
-            return res.status(500).json({ error: 'Erro no servidor' });
-        }
-
-        if (results.length === 0) {
-            return res.status(400).json({ error: 'Token inválido ou expirado.' });
-        }
-
-        res.status(200).json({ success: true, message: 'Token verificado com sucesso. Redefina sua senha.' });
-    });
-});*/
-
-// Rota para redefinir a senha com criptografia
-/*app.post('/reset-password', (req, res) => {
-    const { email, novaSenha } = req.body;
-
-    // Log para ver o que está sendo recebido
-    console.log('E-mail recebido:', email);
-    console.log('Nova senha recebida:', novaSenha);
-
-    if (!email || !novaSenha) {
-        return res.status(400).json({ message: 'E-mail e nova senha são necessários.' });
-    }
-
-    // Gerar um hash da nova senha
-    bcrypt.hash(novaSenha, 10, (err, hash) => {
-        if (err) {
-            console.error('Erro ao criptografar a senha:', err);
-            return res.status(500).json({ message: 'Erro ao criptografar a senha.' });
-        }
-
-        // Atualizar a senha no banco de dados
-        const queryUpdate = 'UPDATE usuario SET senha = ?, resetPasswordToken = NULL, resetPasswordExpires = NULL WHERE email = ?';
-        db.query(queryUpdate, [hash, email], (err, result) => {
-            if (err) {
-                console.error('Erro ao atualizar a senha no banco de dados:', err);
-                return res.status(500).json({ message: 'Erro ao redefinir a senha.' });
-            }
-
-            // Logar o resultado da query para depuração
-            console.log('Resultado da query:', result);
-
-            if (result.affectedRows === 0) {
-                return res.status(404).json({ message: 'Usuário não encontrado.' });
-            }
-
-            res.json({ success: true, message: 'Senha redefinida com sucesso!' });
-        });
-    });
-});*/
 
 // Servir arquivos estáticos (CSS, imagens, etc.)
 app.use(express.static(path.join(__dirname, 'css')));

@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Teste de Upload</title>
+</head>
+<body>
+
+  <!-- Link para abrir o input de arquivos -->
+  <a href="#" id="uploadTrigger" role="button">Clique para fazer upload</a>
+  <!-- Input de arquivo escondido -->
+  <input type="file" id="fileInput" accept=".xlsx, .csv" style="display:none;">
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const uploadTrigger = document.getElementById('uploadTrigger');
+      const fileInput = document.getElementById('fileInput');
+
+      // Abre a janela de arquivos quando o link for clicado
+      uploadTrigger.addEventListener('click', function (event) {
+        event.preventDefault(); // Evita o comportamento padrão do link
+        fileInput.click(); // Simula o clique no input de arquivo
+      });
+
+      // Quando o arquivo for selecionado
+      fileInput.addEventListener('change', function () {
+        if (fileInput.files.length > 0) {
+          const file = fileInput.files[0];
+          console.log(`Arquivo selecionado: ${file.name}`);
+          // Enviar para o servidor ou outro processo aqui
+        }
+      });
+    });
+  </script>
+
+</body>
+</html>
