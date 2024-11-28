@@ -172,6 +172,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
   // Objeto para armazenar instâncias dos gráficos
   const charts = {};
+  
 
   // Função para buscar e processar o arquivo retornado
   function fetchUploadedFile() {
@@ -193,10 +194,11 @@ document.addEventListener('DOMContentLoaded', function () {
           // Processa a primeira aba do arquivo Excel
           const sheetName = workbook.SheetNames[0];
           const sheetData = XLSX.utils.sheet_to_json(workbook.Sheets[sheetName]);
-
+          
           // Converte os dados para o formato que o gráfico espera
+          const filteredData2 = sheetData.filter(row => row.Mês && row.Tomadas && row.Lampadas);
           const chart1Data = {
-            labels: sheetData.map(row => row.Mês), // Exemplo de coluna "Mês"
+            labels: filteredData2.map(row => row.Mês), // Exemplo de coluna "Mês"
             datasets: [{
               label: "Gastos",
               data: sheetData.map(row => row.Gastos), // Exemplo de coluna "Gastos"
@@ -214,27 +216,28 @@ document.addEventListener('DOMContentLoaded', function () {
               barPercentage: 0.4,
             }]
           };
-
           const chart2Data = {
-            labels: sheetData.map(row => row.Mês),
+            labels: filteredData2.map(row => row.Mês),
             datasets: [{
               label: "Tomadas",
-              data: sheetData.map(row => row.Tomadas),
-              backgroundColor: "#dc3545",
-              borderColor: 'transparent',
-              borderWidth: 2.5,
-              barPercentage: 0.4,
+              data: filteredData2.map(row => row.Tomadas),
+              lineTension: 0.2,
+              borderColor: '#d9534f',
+              borderWidth: 1.5,
+              showLine: true,
+              backgroundColor: 'transparent'
             },{
               label: "Lâmpadas",
-              data: sheetData.map(row => row.Lampadas),
-              backgroundColor: 'transparent',
-              borderColor: '#dc3545',
-              lineTension: .4,
+              data: filteredData2.map(row => row.Lampadas),
+              lineTension: 0.2,
+              borderColor: '#ffc107',
               borderWidth: 1.5,
+              showLine: true,
+              backgroundColor: 'transparent'
             }]
           };
           const chart3Data = {
-            labels: sheetData.map(row => row.Mês),
+            labels: filteredData2.map(row => row.Mês),
             datasets: [{
               label: "2023",
               data: sheetData.map(row => row.y2023),
@@ -270,59 +273,13 @@ document.addEventListener('DOMContentLoaded', function () {
             }
           ]
           };
+          
+          const filteredData = sheetData.filter(row => row.Estações && row.GastoE);
           const chart4Data = {
-            labels: sheetData.map(row => row.Estações),
-            datasets: [{
+            labels: filteredData .map(row => row.Estações),
+              datasets: [{
               label: "Verão",
-              data: sheetData.map(row => row.Verão),
-              backgroundColor: [
-                'rgba(255, 99, 132, 0.6)',
-                'rgba(54, 162, 235, 0.6)',
-                'rgba(255, 206, 86, 0.6)',
-                'rgba(75, 192, 192, 0.6)'
-              ],
-              borderColor: [
-                'rgba(255, 99, 132, 1)',
-                'rgba(54, 162, 235, 1)',
-                'rgba(255, 206, 86, 1)',
-                'rgba(75, 192, 192, 1)'
-              ],
-              borderWidth: 1
-            },{
-              label: "Outono",
-              data: sheetData.map(row => row.Outono),
-              backgroundColor: [
-                'rgba(255, 99, 132, 0.6)',
-                'rgba(54, 162, 235, 0.6)',
-                'rgba(255, 206, 86, 0.6)',
-                'rgba(75, 192, 192, 0.6)'
-              ],
-              borderColor: [
-                'rgba(255, 99, 132, 1)',
-                'rgba(54, 162, 235, 1)',
-                'rgba(255, 206, 86, 1)',
-                'rgba(75, 192, 192, 1)'
-              ],
-              borderWidth: 1
-            },{
-              label: "Inverno",
-              data: sheetData.map(row => row.Inverno),
-              backgroundColor: [
-                'rgba(255, 99, 132, 0.6)',
-                'rgba(54, 162, 235, 0.6)',
-                'rgba(255, 206, 86, 0.6)',
-                'rgba(75, 192, 192, 0.6)'
-              ],
-              borderColor: [
-                'rgba(255, 99, 132, 1)',
-                'rgba(54, 162, 235, 1)',
-                'rgba(255, 206, 86, 1)',
-                'rgba(75, 192, 192, 1)'
-              ],
-              borderWidth: 1
-            },{
-              label: "Primavera",
-              data: sheetData.map(row => row.Primavera),
+              data: filteredData.map(row => row.GastoE),
               backgroundColor: [
                 'rgba(255, 99, 132, 0.6)',
                 'rgba(54, 162, 235, 0.6)',
