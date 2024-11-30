@@ -5,8 +5,5 @@ create table IF NOT EXISTS usuario(
 idusuario int primary key auto_increment not null,
 nome varchar(70) not null,
 email varchar(70) not null,
-senha varchar(70) not null,
-resetPasswordToken VARCHAR(255),
-resetPasswordExpires DATETIME
+senha varchar(70) not null
 );
-

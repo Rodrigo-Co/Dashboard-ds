@@ -84,81 +84,86 @@ app.get('/user/profile', (req, res) => {
 });
 
 // Endpoint para upload e processamento de planilha
-app.post('/upload', upload.single('file'), (req, res) => {
-    const filePath = req.file.path;
-  
+const uploadDir = path.join(__dirname, 'uploads');
+// Endpoint para upload e processamento de planilhas
+app.post('/upload', upload.single('file'), async (req, res) => {
     try {
-      const workbook = XLSX.readFile(filePath);
-      const sheetName = workbook.SheetNames[0]; // Considera a primeira aba
-      const sheetData = XLSX.utils.sheet_to_json(workbook.Sheets[sheetName]);
-  
-      // Assumindo que a planilha contém colunas específicas para cada gráfico
-      const dataForCharts = {
-        chart: {
-          labels: sheetData.map(row => row.Mês), // Exemplo de coluna "Mês"
-          datasets: [{
-            label: "Gastos",
-            data: sheetData.map(row => row.Gastos), // Exemplo de coluna "Gastos"
-            backgroundColor: "#0d6efd",
-            borderColor: 'transparent',
-            borderWidth: 2.5,
-            barPercentage: 0.4,
-          }, {
-            label: "Economia",
-            startAngle: 2,
-            data: sheetData.map(row => row.Economia), // Exemplo de coluna "Economia"
-            backgroundColor: "#dc3545",
-            borderColor: 'transparent',
-            borderWidth: 2.5,
-            barPercentage: 0.4,
-          }]
+        // Verifica se o arquivo foi recebido
+        if (!req.file) {
+            return res.status(400).json({ message: 'Nenhum arquivo enviado.' });
         }
-        /*
-        ,
-        chart2: {
-          labels: sheetData.map(row => row.Item), // Exemplo de coluna "Item"
-          datasets: [{
-            label: "Consumo",
-            data: sheetData.map(row => row.Consumo), // Exemplo de coluna "Consumo"
-            backgroundColor: "#f0ad4e",
-          }]
-        },
-        myChartM: {
-          labels: sheetData.map(row => row.Mês),
-          datasets: [{
-            label: "Gastos no Ano",
-            data: sheetData.map(row => row['Gastos Ano']), // Exemplo de coluna "Gastos Ano"
-            borderColor: "#337ab7",
-            backgroundColor: "transparent",
-          }]
-        },
-        myChartD: {
-          labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
-          datasets: [{
-            data: [12, 19, 3, 5, 2, 3], // Dados fixos ou processados
-            backgroundColor: [
-              'rgba(255, 99, 132, 0.6)',
-              'rgba(54, 162, 235, 0.6)',
-              'rgba(255, 206, 86, 0.6)',
-              'rgba(75, 192, 192, 0.6)',
-              'rgba(153, 102, 255, 0.6)',
-              'rgba(255, 159, 64, 0.6)'
-            ]
-          }]
-        }
-        */
-      };
-  
-      res.json({
-        message: 'Planilha processada com sucesso!',
-        data: dataForCharts,
-      });
-  
+
+        const filePath = req.file.path; // Caminho do novo arquivo
+
+        // Remove arquivos existentes na pasta 'uploads' (assíncrono)
+        await new Promise((resolve, reject) => {
+            fs.readdir(uploadDir, (err, files) => {
+                if (err) {
+                    console.error('Erro ao ler a pasta uploads:', err);
+                    return reject(err);
+                }
+
+                const removeFiles = files.map(file => {
+                    if (file !== path.basename(filePath)) { // Não remove o arquivo atual
+                        return new Promise((resolveFile, rejectFile) => {
+                            fs.unlink(path.join(uploadDir, file), err => {
+                                if (err) {
+                                    console.error(`Erro ao excluir o arquivo ${file}:`, err);
+                                    rejectFile(err);
+                                } else {
+                                    resolveFile();
+                                }
+                            });
+                        });
+                    }
+                });
+
+                Promise.all(removeFiles)
+                    .then(resolve)
+                    .catch(reject);
+            });
+        });
+
+        // Processa o novo arquivo após garantir que está salvo
+        const workbook = XLSX.readFile(filePath);
+        const sheetName = workbook.SheetNames[0]; // Considera a primeira aba
+        const sheetData = XLSX.utils.sheet_to_json(workbook.Sheets[sheetName]);
+
+        // Dados para gráficos
+        const dataForCharts = {
+            chart: {
+                labels: sheetData.map(row => row.Mês), // Exemplo de coluna "Mês"
+                datasets: [
+                    {
+                        label: 'Gastos',
+                        data: sheetData.map(row => row.Gastos), // Exemplo de coluna "Gastos"
+                        backgroundColor: '#0d6efd',
+                        borderColor: 'transparent',
+                        borderWidth: 2.5,
+                        barPercentage: 0.4,
+                    },
+                    {
+                        label: 'Economia',
+                        startAngle: 2,
+                        data: sheetData.map(row => row.Economia), // Exemplo de coluna "Economia"
+                        backgroundColor: '#dc3545',
+                        borderColor: 'transparent',
+                        borderWidth: 2.5,
+                        barPercentage: 0.4,
+                    },
+                ],
+            },
+        };
+
+        res.json({
+            message: 'Planilha processada com sucesso!',
+            data: dataForCharts,
+        });
     } catch (error) {
-      console.error('Erro ao processar a planilha:', error);
-      res.status(500).json({ message: 'Erro ao processar a planilha.', error });
+        console.error('Erro ao processar a planilha:', error);
+        res.status(500).json({ message: 'Erro ao processar a planilha.', error });
     }
-  });
+});
 
 // Endpoint para buscar o arquivo da pasta de uploads
 app.get('/uploaded-file', (req, res) => {
@@ -174,6 +179,20 @@ app.get('/uploaded-file', (req, res) => {
     } else {
         res.status(404).json({ message: 'Nenhum arquivo encontrado na pasta de uploads.' });
     }
+});
+
+// Endpoint para contar arquivos na pasta uploads
+app.get('/uploads/count', (req, res) => {
+    const uploadsDir = path.join(__dirname, 'uploads');
+
+    fs.readdir(uploadsDir, (err, files) => {
+        if (err) {
+            console.error('Erro ao listar arquivos na pasta uploads:', err);
+            return res.status(500).json({ message: 'Erro ao contar arquivos.' });
+        }
+
+        res.json({ count: files.length });
+    });
 });
 
 // Servir arquivos estáticos (CSS, imagens, etc.)
@@ -227,11 +246,11 @@ app.get('/getUsuarioId', (req, res) => {
 
 // Rota para login de dados com verificação da senha criptografada
 app.post('/login', (req, res) => {
-    const { email, senha } = req.body;
+    const { emails, senha } = req.body;
     
     // Verificar se o e-mail existe
     const queryVerificar = 'SELECT * FROM usuario WHERE email = ?';
-    db.query(queryVerificar, [email], (err, results) => {
+    db.query(queryVerificar, [emails], (err, results) => {
         if (err) {
             throw err;
         }
@@ -262,7 +281,7 @@ app.post('/login', (req, res) => {
 });
 // Rota para cadastrar dados com senha criptografada
 app.post('/cadastrar', (req, res) => {
-    const { nome, email, senha } = req.body;
+    const { name, email, password } = req.body;
 
     // Verificar se o e-mail já está cadastrado
     const queryVerificar = 'SELECT * FROM usuario WHERE email = ?';
@@ -275,7 +294,7 @@ app.post('/cadastrar', (req, res) => {
         }
 
         // Criptografar a senha antes de armazená-la
-        bcrypt.hash(senha, 10, (err, hash) => {
+        bcrypt.hash(password, 10, (err, hash) => {
             if (err) {
                 console.error('Erro ao criptografar a senha:', err);
                 return res.status(500).json({ message: 'Erro ao cadastrar usuário.' });
@@ -283,7 +302,7 @@ app.post('/cadastrar', (req, res) => {
 
             // Inserir o novo usuário com a senha criptografada
             const query = 'INSERT INTO usuario (nome, email, senha) VALUES (?, ?, ?)';
-            db.query(query, [nome, email, hash], (err, results) => {
+            db.query(query, [name, email, hash], (err, results) => {
                 if (err) {
                     throw err;
                 }
@@ -291,6 +310,23 @@ app.post('/cadastrar', (req, res) => {
             });
         });
     });
+});
+
+app.post('/logout', (req, res) => {
+    if (req.session) {
+        // Destrói a sessão
+        req.session.destroy(err => {
+            if (err) {
+                console.error('Erro ao destruir a sessão:', err);
+                return res.status(500).json({ success: false, message: 'Erro ao deslogar.' });
+            }
+            // Envia uma resposta de sucesso
+            res.clearCookie('connect.sid'); // Opcional: remove o cookie da sessão
+            return res.json({ success: true, message: 'Logout bem-sucedido.' });
+        });
+    } else {
+        return res.status(400).json({ success: false, message: 'Nenhuma sessão ativa.' });
+    }
 });
 
 //verificar cadastros

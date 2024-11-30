@@ -23,7 +23,7 @@
          alt="">
     <div class="ms-2">
       <h5 class="fs-6 mb-0">
-        <a class="text-decoration-none" href="#">Visitante</a>
+        <a class="text-decoration-none" href="#" id="userName" style="cursor: default;">Visitante</a>
       </h5>
       <p class="mt-1 mb-0">Leitor do consumo.</p>
     </div>
@@ -33,16 +33,21 @@
     <input type="text" class="form-control w-100 border-0 bg-transparent" placeholder="Search here" style="color: aliceblue;">
     <i class="fa fa-search position-absolute d-block fs-6"></i>
   </div> -->
-
   <ul class="categories list-unstyled">
     <li class="has-dropdown">
       <i class="uil-estate fa-fw"></i><a href="#"> Dashboard</a>
-      <ul class="sidebar-dropdown list-unstyled">
-        <li><a href="#">Dados 1</a></li>
-        <li><a href="#">Dados 2</a></li>
-        <li><a href="#">Dados 3</a></li>
-        <li><a href="#">Dados 4</a></li>
-        <li><a href="#">Dados 5</a></li>
+      <ul class="sidebar-dropdown list-unstyled ">
+        <li class="dropdown-divider"></li>
+        <li><a href="#myChart">Balanço do consumo de energia no ano atual</a></li>
+        <li class="dropdown-divider"></li>
+        <li><a href="#myChart2">Consumo de energia em R$</a></li>
+        <li class="dropdown-divider"></li>
+        <li><a href="#donutChart">Gasto de energia por estação em R$</a></li>
+        <li class="dropdown-divider"></li>
+        <li><a href="#mes">Mês atual</a></li>
+        <li class="dropdown-divider"></li>
+        <li><a href="#chart3">Balanço do consumo de energia em anos anteriores</a></li>
+        <li class="dropdown-divider"></li>
       </ul>
     </li>
     <li>
@@ -50,75 +55,15 @@
       <a href="#" id="uploadTrigger" style="z-index: 1002;">Planilha</a>
         <input type="file" id="fileInput" name="file" accept=".xlsx,.csv" style="display: none;" />
     </li>
-    <li class="has-dropdown">
-      <i class="uil-calendar-alt"></i><a href="#"> Calender</a>
-      <ul class="sidebar-dropdown list-unstyled">
-        <li><a href="#">Lorem ipsum</a></li>
-        <li><a href="#">ipsum dolor</a></li>
-        <li><a href="#">dolor ipsum</a></li>
-        <li><a href="#">amet consectetur</a></li>
-        <li><a href="#">ipsum dolor sit</a></li>
-      </ul>
+    <li>
+      <i class="uil-calendar-alt"></i><a href="https://www.supercalendario.com.br/2024" target="_blank"> Calendario</a>
     </li>
-    <li class="has-dropdown">
-      <i class="uil-envelope-download fa-fw"></i><a href="#"> Mailbox</a>
-      <ul class="sidebar-dropdown list-unstyled">
-        <li><a href="#">Lorem ipsum</a></li>
-        <li><a href="#">ipsum dolor</a></li>
-        <li><a href="#">dolor ipsum</a></li>
-        <li><a href="#">amet consectetur</a></li>
-        <li><a href="#">ipsum dolor sit</a></li>
-      </ul>
+    <li>
+      <i class="uil-envelope-download fa-fw"></i><a href="https://mail.google.com/mail/?authuser=0" target="_blank"> Caixa de e-mails</a>
     </li>
-    <li class="has-dropdown">
-      <i class="uil-shopping-cart-alt"></i><a href="#"> Ecommerce</a>
-      <ul class="sidebar-dropdown list-unstyled">
-        <li><a href="#">Lorem ipsum</a></li>
-        <li><a href="#">ipsum dolor</a></li>
-        <li><a href="#">dolor ipsum</a></li>
-        <li><a href="#">amet consectetur</a></li>
-        <li><a href="#">ipsum dolor sit</a></li>
-      </ul>
-    </li>
-    <li class="has-dropdown">
-      <i class="uil-bag"></i><a href="#"> Projects</a>
-      <ul class="sidebar-dropdown list-unstyled">
-        <li><a href="#">Lorem ipsum</a></li>
-        <li><a href="#">ipsum dolor</a></li>
-        <li><a href="#">dolor ipsum</a></li>
-        <li><a href="#">amet consectetur</a></li>
-        <li><a href="#">ipsum dolor sit</a></li>
-      </ul>
-    </li>
+    
     <li class="">
-      <i class="uil-setting"></i><a href="#"> Settings</a>
-      <ul class="sidebar-dropdown list-unstyled">
-        <li><a href="#">Lorem ipsum</a></li>
-        <li><a href="#">ipsum dolor</a></li>
-        <li><a href="#">dolor ipsum</a></li>
-        <li><a href="#">amet consectetur</a></li>
-        <li><a href="#">ipsum dolor sit</a></li>
-      </ul>
-    </li>
-    <li class="has-dropdown">
-      <i class="uil-chart-pie-alt"></i><a href="#"> Components</a>
-      <ul class="sidebar-dropdown list-unstyled">
-        <li><a href="#">Lorem ipsum</a></li>
-        <li><a href="#">ipsum dolor</a></li>
-        <li><a href="#">dolor ipsum</a></li>
-        <li><a href="#">amet consectetur</a></li>
-        <li><a href="#">ipsum dolor sit</a></li>
-      </ul>
-    </li>
-    <li class="has-dropdown">
-      <i class="uil-panel-add"></i><a href="#"> Charts</a>
-      <ul class="sidebar-dropdown list-unstyled">
-        <li><a href="#">Lorem ipsum</a></li>
-        <li><a href="#">ipsum dolor</a></li>
-        <li><a href="#">dolor ipsum</a></li>
-        <li><a href="#">amet consectetur</a></li>
-        <li><a href="#">ipsum dolor sit</a></li>
-      </ul>
+      <i class="uil-setting"></i><a href="/config.html"> Configurações</a>
     </li>
     <li class="">
       <i class="uil-map-marker"></i><a target="_blank" href="https://www.google.com/maps/place/Salvador+-+BA/@-12.9146545,-38.4474086,24187m/data=!3m1!1e3!4m6!3m5!1s0x716037ca23ca5b3:0x1b9fc7912c226698!8m2!3d-12.9777334!4d-38.501648!16zL20vMDl3d2xq?entry=ttu&g_ep=EgoyMDI0MTEyNC4xIKXMDSoASAFQAw%3D%3D"> Mapa</a>
@@ -133,24 +78,27 @@
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#toggle-navbar" aria-controls="toggle-navbar" aria-expanded="false" aria-label="Toggle navigation">
           <i class="uil-bars text-white"></i>
         </button>
-        <a class="navbar-brand" href="#"><span class="main-color">365</span>Energy</a>
+        <a class="navbar-brand" href="#"> 
+          <img style="position: absolute; margin-top: -42px;" width="70px" height="auto" src="/logo_biogas.png" alt="">
+        </a>
+        <h4 style="position: absolute; margin-left: 70px; margin-top: -24px; color: aliceblue;">EcoBiogas</h4>
       </div>
       <div class="collapse navbar-collapse" id="toggle-navbar">
         <ul class="navbar-nav ms-auto">
           <li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle"  id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-              Configurações
+              Menu
             </a>
             <ul class="dropdown-menu" aria-labelledby="navbarDropdown" style="padding: 15px; ">
               <li>
-                <a class="dropdown-item" href="#">Minha Conta</a>
+                <a class="dropdown-item" href="#" id="conta">Minha Conta</a>
               </li>
-              <li><a class="dropdown-item" href="#">Minhas Mensagens</a>
+              <li><a class="dropdown-item" href="https://mail.google.com/mail/?authuser=0" target="_blank">Minhas Mensagens</a>
               </li>
-              <li><a class="dropdown-item" href="#">Ajuda</a>
+              <li><a class="dropdown-item" href="https://chatgpt.com" target="_blank">Ajuda</a>
               </li>
               <li><hr class="dropdown-divider"></li>
-              <li><a class="dropdown-item" href="#">Desconectar</a></li>
+              <li><a class="dropdown-item" href="#" id="logoutButton">Desconectar</a></li>
             </ul>
           </li>
           <li class="nav-item">
@@ -172,8 +120,8 @@
   <div class="p-4">
     <div class="welcome">
       <div class="content rounded-3 p-3">
-        <h1 class="fs-3">Bem vindo ao Dashboard</h1>
-        <p class="mb-0">Olá Leitor, bem vindo ao seu dashboard!</p>
+        <h1 class="fs-3">Bem vindo ao Dashboard EcoBiogás</h1>
+        <p class="mb-0">Olá, bem vindo ao seu dashboard!</p>
       </div>
     </div>
 
@@ -184,9 +132,9 @@
             <i class="uil-envelope-shield fs-2 text-center bg-primary rounded-circle"></i>
             <div class="ms-3">
               <div class="d-flex align-items-center">
-                <h3 class="mb-0">1,245</h3> <span class="d-block ms-2">Emails</span>
+                <h3 class="mb-0">0</h3> <span class="d-block ms-2">Comunicados</span>
               </div>
-              <p class="fs-normal mb-0">Lorem ipsum dolor sit amet</p>
+              <p class="fs-normal mb-0">Recados acerca do alto uso de energia</p>
             </div>
           </div>
         </div>
@@ -195,9 +143,9 @@
             <i class="uil-file fs-2 text-center bg-danger rounded-circle"></i>
             <div class="ms-3">
               <div class="d-flex align-items-center">
-                <h3 class="mb-0">34</h3> <span class="d-block ms-2">Projects</span>
+                <h3 class="mb-0" id="fileCount">1</h3> <span class="d-block ms-2">Planilha</span>
               </div>
-              <p class="fs-normal mb-0">Lorem ipsum dolor sit amet</p>
+              <p class="fs-normal mb-0">Planilha com dados</p>
             </div>
           </div>
         </div>
@@ -206,9 +154,9 @@
             <i class="uil-users-alt fs-2 text-center bg-success rounded-circle"></i>
             <div class="ms-3">
               <div class="d-flex align-items-center">
-                <h3 class="mb-0">5,245</h3> <span class="d-block ms-2">Users</span>
+                <h3 class="mb-0">4</h3> <span class="d-block ms-2">Moradores</span>
               </div>
-              <p class="fs-normal mb-0">Lorem ipsum dolor sit amet</p>
+              <p class="fs-normal mb-0">Quantidade de moradores da casa</p>
             </div>
           </div>
         </div>
@@ -219,7 +167,7 @@
       <div class="row">
         <div class="col-lg-6">
           <div class="chart-container rounded-2 p-3">
-            <h3 class="fs-6 mb-3">Chart title number one</h3>
+            <h3 class="fs-6 mb-3">Balanço do consumo de energia no ano atual</h3>
             <div style="height: 250px; width: 100%;">
             <canvas id="myChart"></canvas>
             </div>
@@ -227,7 +175,7 @@
         </div>
         <div class="col-lg-6">
           <div class="chart-container rounded-2 p-3">
-            <h3 class="fs-6 mb-3">Chart title number two</h3>
+            <h3 class="fs-6 mb-3">Consumo de energia em R$</h3>
             <div style="height: 250px; width: 100%;">
               <canvas id="myChart2"></canvas>
             </div> 
@@ -242,7 +190,7 @@
           <div class="box">
             <div class="card card-danger" >
               <div class="card-body" style="background-color: #313348; border-radius: 5px;">
-                <h3 class="card-title">Donut Chart</h3>
+                <h3 class="card-title">Gasto de energia por estação em R$</h3>
                 <div class="chartjs-size-monitor">
                   <div class="chartjs-size-monitor-expand">
                     <div class=""></div>
@@ -311,44 +259,44 @@
         <div class="col-md-6 col-lg-3 mb-4 mb-lg-0">
           <div class="box bg-primary p-3">
             <i class="uil-eye"></i>
-            <h3>5,154</h3>
-            <p class="lead">Page views</p>
+            <h3>R$450,00</h3>
+            <p class="lead">Economia mês anterior</p>
           </div>
         </div>
         <div class="col-md-6 col-lg-3 mb-4 mb-lg-0">
           <div class="box bg-danger p-3">
-            <i class="uil-user"></i>
-            <h3>245</h3>
-            <p class="lead">User registered</p>
+            <i class="uil-estate"></i>
+            <h3>R$1500,00</h3>
+            <p class="lead">Máximo de consumo de energia</p>
           </div>
         </div>
         <div class="col-md-6 col-lg-3 mb-4 mb-md-0">
           <div class="box bg-warning p-3">
-            <i class="uil-shopping-cart"></i>
-            <h3>5,154</h3>
-            <p class="lead">Product sales</p>
+            <i class="uil-bell"></i>
+            <h3>0</h3>
+            <p class="lead">Notificações</p>
           </div>
         </div>
         <div class="col-md-6 col-lg-3">
-          <div class="box bg-success p-3">
-            <i class="uil-feedback"></i>
-            <h3>5,154</h3>
-            <p class="lead">Transactions</p>
+          <div class="box bg-success p-3" id="mes">
+            <i class="uil-calendar-alt"></i>
+            <h3>Outubro</h3>
+            <p class="lead">Mês atual</p>
           </div>
         </div>
       </div>
     </section>
-
-
     
-    
+
     <section class="charts mt-4">
-        <div class="chart-container p-3" style="width: 100%;">
-          <h3 class="fs-6 mb-3">Chart title number three</h3>
+      <div class="row">
+        <div class="chart-container rounded-2 p-3" style="width: 100%;">
+          <h3 class="fs-6 mb-3">Balanço do consumo de energia em anos anteriores</h3>
           <div style="height: 300px; width: 100% ;">
             <canvas id="chart3" ></canvas>
           </div>
-        </div>
+      </div>
+    </div>
     </section>
     
     
@@ -372,6 +320,95 @@
 <!-- AdminLTE -->
 <script src="https://cdn.jsdelivr.net/npm/admin-lte@3.2.0/dist/js/adminlte.min.js"></script>
 
+<script>
+  // Requisição para obter o número de arquivos na pasta uploads
+  fetch('/uploads/count')
+    .then(response => response.json())
+    .then(data => {
+      document.getElementById('fileCount').textContent = data.count;
+    })
+    .catch(error => {
+      console.error('Erro ao obter o número de arquivos:', error);
+    });
 
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function(e) {
+      e.preventDefault();
+      const target = document.querySelector(this.getAttribute('href'));
+      if (target) {
+        target.scrollIntoView({
+          behavior: 'smooth',
+          block: 'center' // Centraliza o elemento na vertical
+        });
+      }
+    });
+  });
+
+  document.addEventListener('DOMContentLoaded', () => {
+    fetch('/user/profile', {
+      method: 'GET',
+      credentials: 'include',
+    })
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          const userNameElement = document.getElementById('userName');
+          userNameElement.textContent = data.nome;
+        } else {
+          console.error('Erro:', data.message);
+        }
+      })
+      .catch(error => {
+        console.error('Erro ao buscar dados do usuário:', error);
+      });
+  });
+
+  document.getElementById('logoutButton').addEventListener('click', function() {
+    fetch('/logout', {
+        method: 'POST',
+        credentials: 'include', // Inclui os cookies/sessão na requisição
+    })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Logout bem-sucedido, redirecionar para a página de login
+                window.location.href = '/login.html';
+            } else {
+                alert(data.message);
+            }
+        })
+        .catch(error => {
+            console.error('Erro ao deslogar:', error);
+        });
+});
+
+document.getElementById('conta').addEventListener('click', function (e) {
+    e.preventDefault(); // Evita o comportamento padrão do link
+    verificarLogin();
+  });
+
+  function verificarLogin() {
+  fetch('/user/profile', {
+    method: 'GET',
+    credentials: 'include' // Inclui cookies/sessões na requisição
+  })
+    .then(response => response.json())
+    .then(data => {
+      if (data.success) {
+        // Usuário está logado, redireciona para a página "Minha Conta"
+        window.location.href = '/config.html';
+      } else {
+        // Usuário não está logado, redireciona para a página de login
+        window.location.href = '/login.html';
+      }
+    })
+    .catch(error => {
+      console.error('Erro ao verificar login:', error);
+      // Opcional: redireciona para login em caso de erro
+      window.location.href = '/login.html';
+    });
+}
+
+</script>
 </body>
 </html>

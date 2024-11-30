@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+  <meta charset="UTF-8">
+  <title>Acesso</title>
+  <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.14.0/css/all.min.css'><link rel="stylesheet" href="./login.css">
+
+</head>
+<body>
+<!-- partial:index.partial.html -->
+<h2>EcoBiogas</h2>
+<div class="container" id="container">
+	<div class="form-container sign-up-container">
+		<form id="cadastroForm">
+			<h1>Criar conta</h1>
+			<input type="text" placeholder="Name" name="name" id="floatingName"/>
+			<input type="email" placeholder="Email" name="email" id="floatingInput"/>
+			<input type="password" placeholder="Password" name="password" id="floatingPassword"/>
+			<button type="submit">Cadastrar</button>
+		</form>
+	</div>
+	<div class="form-container sign-in-container">
+		<form id="loginForm">
+			<h1>Acessar</h1>
+			<input type="email" placeholder="Email" name="emails" id="floatingEmail"/>
+			<input type="password" placeholder="Password" name="senha" id="floatingSenha"/>
+			<button type="submit">Entrar</button>
+		</form>
+	</div>
+	<div class="overlay-container">
+		<div class="overlay">
+			<div class="overlay-panel overlay-left">
+				<h1>Bem vindo de volta!</h1>
+				<p>Para se manter conectado conosco, por favor entre com sua conta pessoal.</p>
+				<button class="ghost" id="signIn">Acessar</button>
+			</div>
+			<div class="overlay-panel overlay-right">
+				<h1>Olá visitante!</h1>
+				<p>Cadastre os seus dados e comece sua jornada conosco.</p>
+				<button class="ghost" id="signUp">Cadastrar</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+<!-- partial -->
+  <script>
+    const signUpButton = document.getElementById('signUp');
+const signInButton = document.getElementById('signIn');
+const container = document.getElementById('container');
+
+signUpButton.addEventListener('click', () => {
+	container.classList.add("right-panel-active");
+});
+
+signInButton.addEventListener('click', () => {
+	container.classList.remove("right-panel-active");
+});
+
+// Função para cadastro
+document.getElementById('cadastroForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const formData = new FormData(e.target);
+            const data = Object.fromEntries(formData.entries());
+
+            // Verificar se todos os campos estão preenchidos
+            if (!data.name || !data.email || !data.password) {
+            alert('Por favor, preencha todos os campos!');
+            return;
+            }
+
+            // Verificar se o email é válido
+            const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+            if (!emailRegex.test(data.email)) {
+              alert('Por favor, insira um email válido!');
+              return;
+            }
+          
+            // Verificar se a senha tem pelo menos 6 caracteres
+            if (data.password.length < 6) {
+              alert('A senha deve ter pelo menos 6 caracteres!');
+              return;
+            }
+            
+            fetch('/cadastrar', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            })
+                .then(response => response.json())
+                .then(data => {
+                    alert(data.message);
+                    window.location.reload();
+                })
+                .catch(error => {
+                console.error('Erro:', error);
+                });
+        });
+
+// Função para login
+document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const formData = new FormData(e.target);
+            const data = Object.fromEntries(formData.entries());
+
+
+
+            fetch('/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        // Login bem-sucedido, redirecionar para a página de destino
+                        window.location.href = '/dashboard';
+                    } else {
+                        alert(data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Erro:', error);
+                });
+        });
+
+  </script>
+
+</body>
+</html>

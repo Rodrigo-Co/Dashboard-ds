@@ -241,7 +241,7 @@ document.addEventListener('DOMContentLoaded', function () {
             datasets: [{
               label: "2023",
               data: sheetData.map(row => row.y2023),
-              lineTension: 0.2,
+              lineTension: 0,
               borderColor: '#d9534f',
               borderWidth: 1.5,
               showLine: true,
@@ -249,24 +249,24 @@ document.addEventListener('DOMContentLoaded', function () {
             },{
               label: "2022",
               data: sheetData.map(row => row.y2022),
-              lineTension: 0.2,
-              borderColor: '#d9534f',
+              lineTension: 0,
+              borderColor: '#00FF00',
               borderWidth: 1.5,
               showLine: true,
               backgroundColor: 'transparent'
             },{
               label: "2021",
               data: sheetData.map(row => row.y2021),
-              lineTension: 0.2,
-              borderColor: '#d9534f',
+              lineTension: 0,
+              borderColor: '#00FFFF',
               borderWidth: 1.5,
               showLine: true,
               backgroundColor: 'transparent'
             },{
               label: "2020",
               data: sheetData.map(row => row.y2020),
-              lineTension: 0.2,
-              borderColor: '#d9534f',
+              lineTension: 0,
+              borderColor: '#D3D3D3',
               borderWidth: 1.5,
               showLine: true,
               backgroundColor: 'transparent'
