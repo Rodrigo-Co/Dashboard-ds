@@ -8,11 +8,15 @@
 </head>
 <body>
 <!-- partial:index.partial.html -->
-<h2>EcoBiogas</h2>
+<h2>EcoBiogás</h2>
 <div class="container" id="container">
 	<div class="form-container sign-up-container">
 		<form id="cadastroForm">
 			<h1>Criar conta</h1>
+            <div class="social-container">
+				<a href="/auth/google" class="social"><i class="fab fa-google-plus-g"></i></a>
+			</div>
+			<span>ou use seu email para registrar</span>
 			<input type="text" placeholder="Name" name="name" id="floatingName"/>
 			<input type="email" placeholder="Email" name="email" id="floatingInput"/>
 			<input type="password" placeholder="Password" name="password" id="floatingPassword"/>
@@ -22,6 +26,10 @@
 	<div class="form-container sign-in-container">
 		<form id="loginForm">
 			<h1>Acessar</h1>
+            <div class="social-container">
+				<a href="/auth/google" class="social"><i class="fab fa-google-plus-g"></i></a>
+			</div>
+			<span>ou use sua conta</span>
 			<input type="email" placeholder="Email" name="emails" id="floatingEmail"/>
 			<input type="password" placeholder="Password" name="senha" id="floatingSenha"/>
 			<button type="submit">Entrar</button>

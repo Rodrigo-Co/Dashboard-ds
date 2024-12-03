@@ -7,3 +7,5 @@ nome varchar(70) not null,
 email varchar(70) not null,
 senha varchar(70) not null
 );
+ALTER TABLE usuario MODIFY senha VARCHAR(255) DEFAULT 'GOOGLE_ACCOUNT';
+

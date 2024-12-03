@@ -266,7 +266,7 @@ document.addEventListener('DOMContentLoaded', function () {
               label: "2020",
               data: sheetData.map(row => row.y2020),
               lineTension: 0,
-              borderColor: '#D3D3D3',
+              borderColor: '#3b3d56',
               borderWidth: 1.5,
               showLine: true,
               backgroundColor: 'transparent'
@@ -281,16 +281,16 @@ document.addEventListener('DOMContentLoaded', function () {
               label: "Verão",
               data: filteredData.map(row => row.GastoE),
               backgroundColor: [
-                'rgba(255, 99, 132, 0.8)',
-                'rgba(54, 162, 235, 0.8)',
-                'rgba(255, 206, 86, 0.8)',
-                'rgba(75, 192, 192, 0.8)'
+                'rgb(247, 110, 19)',
+                'rgba(247, 231, 19, 0.932)',
+                'rgb(54, 162, 235)',
+                'rgb(46, 155, 2)'
               ],
               borderColor: [
-                'rgba(255, 99, 132, 1)',
-                'rgba(54, 162, 235, 1)',
-                'rgba(255, 206, 86, 1)',
-                'rgba(75, 192, 192, 1)'
+                'rgba(255, 99, 132, 1.5)',
+                'rgba(255, 206, 86, 1.5)',
+                'rgba(54, 162, 235, 1.5)',
+                'rgba(35, 124, 0, 1.5)'
               ],
               borderWidth: 1
             }]

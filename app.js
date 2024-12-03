@@ -10,6 +10,8 @@ const bcrypt = require('bcryptjs');
 const multer = require('multer');
 const fs = require('fs'); 
 const XLSX = require('xlsx');
+const passport = require('passport');
+const GoogleStrategy = require('passport-google-oauth20').Strategy;
 
 const app = express();
 const port = 3300;
@@ -22,7 +24,7 @@ app.use(bodyParser.json());
 const db = mysql.createConnection({
     host: 'localhost',
     user: 'root', // Substitua pelo seu usuário do MySQL
-    password: 'rodrigo', // Substitua pela sua senha do MySQL
+    password: 'cimatec', // Substitua pela sua senha do MySQL
     database: 'bancodashboard', // Nome do seu banco de dados
 });
 
@@ -32,8 +34,10 @@ db.connect((err) => {
     }
     console.log('Conectado ao banco de dados MySQL com Sucesso!');
 });
+
+var secretstring = crypto.randomBytes(32).toString('hex');
 app.use(session({
-    secret: 'segredo',
+    secret: secretstring,
     resave: false,    // Certifique-se de que está configurado corretamente
     saveUninitialized: true, // Mantém a sessão, mesmo sem modificações
     cookie: { secure: false } // Deve estar como "false" se você estiver testando em HTTP (não HTTPS)
@@ -52,36 +56,112 @@ const upload = multer({
     }
   });
 
-app.get('/user/profile', (req, res) => {
-    // Verifique se o usuário está logado
-    if (!req.session.usuario) {
-        return res.status(401).json({ success: false, message: 'Você precisa estar logado.' });
-    }
+  // Configuração da estratégia do Google
+passport.use(
+    new GoogleStrategy(
+        {
+            clientID: '1081687392332-li4jmoeru81a5m692f32r79ud0ncdp3i.apps.googleusercontent.com', // Substitua pelo ID do Cliente obtido no Google Cloud Console
+            clientSecret: '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', // Substitua pelo Secret obtido no Google Cloud Console
+            callbackURL: '/auth/google/callback' // URL de redirecionamento configurada no Google Console
+        },
+        (accessToken, refreshToken, profile, done) => {
+            console.log('Profile:', JSON.stringify(profile, null, 2));
+    const email = profile.emails?.[0]?.value;
+    const name = profile.displayName;
 
-    const userId = req.session.usuario.idusuario;
+    if (!email) {
+        console.error('Email não disponível no perfil do usuário.');
+        return done(new Error('Email não disponível no perfil do usuário.'));
+    }   
 
-    // Consulta o banco de dados para obter o nome e a imagem de perfil
-    const queryGetUser = 'SELECT nome FROM usuario WHERE idusuario = ?';
+            // Verifique ou cadastre o usuário no banco de dados
+            const query = 'SELECT * FROM usuario WHERE email = ?';
+            db.query(query, [email], (err, results) => {
+                if (err) return done(err);
 
-    db.query(queryGetUser, [userId], (err, result) => {
-        if (err) {
-            console.error('Erro ao buscar o usuário no banco de dados:', err);
-            return res.status(500).json({ success: false, message: 'Erro ao buscar o usuário.' });
-        }
-
-        if (result.length > 0) {
-            const userData = result[0];
-            const userName = userData.nome;
-
-            return res.json({
-                success: true,
-                nome: userName
+                if (results.length > 0) {
+                    // Usuário já existe
+                    return done(null, results[0]);
+                } else {
+                    // Cadastrar o novo usuário
+                    const insertQuery = 'INSERT INTO usuario (nome, email) VALUES (?, ?)';
+                    if (email && name) {
+                        db.query(insertQuery, [name, email], (err, result) => {
+                            if (err) return done(err);
+                    
+                            const novoUsuario = { idusuario: result.insertId, nome: name, email: email };
+                            return done(null, novoUsuario);
+                        });
+                    } else {
+                        return done(new Error('Dados insuficientes para cadastro.'));
+                    }
+                }
             });
-        } else {
-            return res.status(404).json({ success: false, message: 'Usuário não encontrado.' });
         }
-    });
+    )
+);
+
+// Serializar e desserializar o usuário na sessão
+passport.serializeUser((user, done) => done(null, user));
+passport.deserializeUser((user, done) => done(null, user));
+
+// Middleware de sessão
+app.use(passport.initialize());
+app.use(passport.session());
+
+// Rota para iniciar login com Google
+app.get('/auth/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
+
+// Rota de callback do Google após autenticação
+app.get(
+    '/auth/google/callback',
+    passport.authenticate('google', { failureRedirect: '/' }),
+    (req, res) => {
+        // Redirecionar o usuário após login bem-sucedido
+        res.redirect('/');
+    }
+);
+
+// Rota protegida para exibir o dashboard
+app.get('/dashboard', (req, res) => {
+    if (req.isAuthenticated()) {
+        res.redirect('/');
+    } else {
+        res.redirect('/');
+    }
 });
+
+
+    app.get('/user/profile', (req, res) => {
+        // Verifique se o usuário está logado
+        if (!req.session.usuario) {
+            return res.status(401).json({ success: false, message: 'Você precisa estar logado.' });
+        }
+
+        const userId = req.session.usuario.idusuario;
+
+        // Consulta o banco de dados para obter o nome e a imagem de perfil
+        const queryGetUser = 'SELECT nome FROM usuario WHERE idusuario = ?';
+
+        db.query(queryGetUser, [userId], (err, result) => {
+            if (err) {
+                console.error('Erro ao buscar o usuário no banco de dados:', err);
+                return res.status(500).json({ success: false, message: 'Erro ao buscar o usuário.' });
+            }
+
+            if (result.length > 0) {
+                const userData = result[0];
+                const userName = userData.nome;
+
+                return res.json({
+                    success: true,
+                    nome: userName
+                });
+            } else {
+                return res.status(404).json({ success: false, message: 'Usuário não encontrado.' });
+            }
+        });
+    });
 
 // Endpoint para upload e processamento de planilha
 const uploadDir = path.join(__dirname, 'uploads');
@@ -214,7 +294,6 @@ app.get('/login', (req, res) => {
     res.sendFile(path.join(__dirname, '/html/login.html'));
 });
 
-// app.get('/dashboards', (req, res) => {res.sendFile(path.join(__dirname, '/html/dashboard.html'));});
 
 
 
@@ -227,12 +306,7 @@ app.get('/dashboard', (req, res) => {
     res.sendFile(path.join(__dirname, '/html/dashboard.html'));
 });
 
-app.use('/dashboard', (req, res, next) => {
-    if (!req.session.usuario) {
-        return res.status(401).send({ message: 'Você precisa se registrar ou logar para acessar esta página.' });
-    }
-    next();
-});
+;
 
 app.get('/getUsuarioId', (req, res) => {
     if (req.session.usuario) {
@@ -281,6 +355,10 @@ app.post('/login', (req, res) => {
 app.post('/cadastrar', (req, res) => {
     const { name, email, password } = req.body;
 
+    // Verificar se os campos obrigatórios foram enviados
+    if (!name || !email) {
+        return res.status(400).json({ message: 'Por favor, preencha todos os campos.' });
+    }
     // Verificar se o e-mail já está cadastrado
     const queryVerificar = 'SELECT * FROM usuario WHERE email = ?';
     db.query(queryVerificar, [email], (err, results) => {
