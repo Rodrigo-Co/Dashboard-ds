@@ -211,11 +211,9 @@ app.get('/', (req, res) => {
 });
 
 app.get('/login', (req, res) => {
-    res.sendFile(path.join(__dirname, '/html/indexLogin.html'));
+    res.sendFile(path.join(__dirname, '/html/login.html'));
 });
-app.get('/cadastro', (req, res) => {
-    res.sendFile(path.join(__dirname, '/html/indexCadastro.html'));
-});
+
 // app.get('/dashboards', (req, res) => {res.sendFile(path.join(__dirname, '/html/dashboard.html'));});
 
 

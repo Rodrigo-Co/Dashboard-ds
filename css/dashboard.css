@@ -44,11 +44,20 @@ body {
  -- Sidebar
 -------------------------------- */
 .sidebar {
-	background-color: var(--sidebar-bg-color);
+	background-color: rgb(0, 59, 168);
 	width: var(--sidebar-width);
 	transition: all .3s ease-in-out;
 	transform: translateX(0);
 	z-index: 999
+}
+
+#sidebar-perfback{
+	position: absolute;
+	background-color: rgb(0, 0, 75);
+	width: 100%;
+	height: 135px;
+	margin-top: -20px;
+	z-index: -1;
 }
 
 .sidebar .close-aside {
@@ -60,15 +69,15 @@ body {
 }
 
 .sidebar .sidebar-header {
-	border-bottom: 1px solid #2a2b3c
+	border-bottom: 1px solid #9CA3AF;	
 }
 
 .sidebar .sidebar-header h5 a {
-	color: var(--dk-gray-300)
+	color: #F3F4F6;
 }
 
 .sidebar .sidebar-header p {
-	color: var(--dk-gray-400);
+	color: #CCC;
 	font-size: .825rem;
 }
 
@@ -83,7 +92,7 @@ body {
 }
 
 .sidebar ul > li > a {
-	color: var(--dk-gray-400);
+	color: #D1D5DB;
 	text-decoration: none;
 }
 
@@ -98,7 +107,7 @@ body {
 .sidebar ul > li > i {
 	font-size: 18px;
 	margin-right: .7rem;
-	color: var(--dk-gray-500);
+	color: #6f6486;
 }
 
 .sidebar ul > li.has-dropdown > a:after {
@@ -107,7 +116,7 @@ body {
 	font-size: 1rem;
 	line-height: 1.8;
 	float: right;
-	color: var(--dk-gray-500);
+	color: #9CA3AF;
 	transition: all .3s ease-in-out;
 }
 
@@ -158,11 +167,11 @@ body {
 }
 
 .welcome .content {
-	background-color: var(--dk-dark-bg);
+	background-color: rgb(42, 150, 0);
 }
 
 .welcome p {
-	color: var(--dk-gray-400);
+	color: #374151;
 }
 
 
@@ -176,7 +185,7 @@ body {
 }
 
 .statistics .box {
-	background-color: var(--dk-dark-bg);
+	background-color: rgb(77, 159, 241);
 }
 
 .statistics .box i {
@@ -186,7 +195,7 @@ body {
 }
 
 .statistics .box p {
-	color: var(--dk-gray-400);
+	color: #374151
 }
 
 
@@ -196,12 +205,19 @@ body {
  -- Charts
 -------------------------------- */
 .charts .chart-container {
-	background-color: var(--dk-dark-bg);
+	background-color: #E5E7EB;
 }
 
 .charts .chart-container h3 {
-	color: var(--dk-gray-400)
+	color: var(--dk-gray-800)
 }
+.card-title{
+	color: var(--dk-gray-800) !important;
+	font-family: inherit !important; 
+    font-weight: 500 !important;
+    line-height: 1.2 !important;
+}
+
 
 
 
@@ -210,7 +226,7 @@ body {
  -- users
 -------------------------------- */
 .admins .box .admin {
-	background-color: var(--dk-dark-bg);
+	background-color: brown;
 }
 
 .admins .box h3 {
@@ -275,7 +291,7 @@ body {
 -------------------------------- */
 
 .navbar {
-	background-color: var(--navbar-bg-color) !important;
+	background-color: rgb(0, 0, 75) !important;
 	border: none !important;
 }
 .navbar .dropdown-menu {
