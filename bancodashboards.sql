@@ -6,7 +6,8 @@ idusuario int primary key auto_increment not null,
 nome varchar(70) not null,
 email varchar(70) not null,
 senha varchar(70) not null DEFAULT 'GOOGLE_ACCOUNT',
-pessoascasa int
+pessoascasa int DEFAULT 1,
+planilha LONGBLOB
 
 );
 alter table usuario modify column pessoascasa int;

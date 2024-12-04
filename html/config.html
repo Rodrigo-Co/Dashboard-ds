@@ -24,15 +24,16 @@
             <div class="bar"></div>
         </div>
         <div class="expand-menu nav flex-column">
-            <a href="#" class="nav-link active mt-auto" id="profile-link"><i class="far fa-user-circle"></i> Profile</a>
-            <a href="#" class="nav-link mb-auto" id="general-link"><i class="fas fa-cogs"></i> General</a>
+            <a href="/dashboard.html"><i class="fas fa-arrow-left" style="position: absolute;color: rgb(214, 214, 214); width: 30px; height: auto; margin-left: 30px; margin-top: 20px;"></i></a>
+            <a href="#" class="nav-link active mt-auto" id="profile-link"><i class="far fa-user-circle"></i> Perfil</a>
+            <a href="#" class="nav-link mb-auto" id="general-link"><i class="fas fa-cogs"></i> Geral</a>
         </div>
     
         <div class="row align-items-center" style="height:100%">
             <div class="col-md-3 d-none d-md-block" style="height:100%">
                 <div class="container-fluid nav sidebar flex-column">
-                    <a href="#" class="nav-link active mt-auto" id="profile-link-sidebar"><i class="far fa-user-circle"></i> Profile</a>
-                    <a href="#" class="nav-link mb-auto" id="general-link-sidebar"><i class="fas fa-cogs"></i> General</a>
+                    <a href="#" class="nav-link active mt-auto" id="profile-link-sidebar"><i class="far fa-user-circle"></i> Perfil</a>
+                    <a href="#" class="nav-link mb-auto" id="general-link-sidebar"><i class="fas fa-cogs"></i> Geral</a>
                 </div>
             </div>
     
@@ -67,14 +68,14 @@
                 <form>
                     <div class="form-group">
                         <label for="pessoascasa">Quantas pessoas há em sua casa:</label>
-                        <input id="pessoascasa" class="form-control" value="1">
+                        <input id="pessoascasa" class="form-control">
                     </div>
                     <div class="row mt-5">
                         <div class="col">
-                            <button type="button" class="btn btn-primary btn-block save">Save Changes</button>
+                            <button type="button" class="btn btn-primary btn-block save">Salvar mudança</button>
                         </div>
                         <div class="col">
-                            <button type="button" class="btn btn-default btn-block">Cancel</button>
+                            <button type="button" class="btn btn-default btn-block">Cancelar</button>
                         </div>
                     </div>
                 </form>
@@ -225,7 +226,7 @@ document.addEventListener('DOMContentLoaded', () => {
         .then(response => response.json())
         .then(data => {
             if (data.pessoas !== undefined) {
-                document.getElementById('pessoascasa').textContent = data.pessoas;
+                document.getElementById('pessoascasa').value = data.pessoas; // Alterando para 'value'
             }
         })
         .catch(err => console.error('Erro ao obter dados:', err));

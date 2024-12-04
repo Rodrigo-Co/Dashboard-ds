@@ -528,16 +528,16 @@ app.post('/update-perfil', (req, res) => {
 
   /// Endpoint para salvar o número de pessoas
 app.post('/pessoascasa', (req, res) => {
-    const { pessoascasa } = req.body;
+    const userId = req.session.usuario.idusuario;
+    const pessoascasa = req.body.pessoascasa;
 
     if (!pessoascasa || isNaN(pessoascasa)) {
         return res.status(400).json({ success: false, message: 'Número inválido!' });
     }
 
     // Insere ou atualiza o valor no banco
-    const sql = `INSERT INTO usuario (pessoascasa) VALUES (?) 
-                 ON DUPLICATE KEY UPDATE pessoascasa = VALUES(pessoascasa)`;
-    db.query(sql, [pessoascasa], (err) => {
+    const sql = 'UPDATE usuario SET pessoascasa = ? WHERE idusuario = ?';
+    db.query(sql, [pessoascasa, userId], (err) => {
         if (err) {
             console.error('Erro ao salvar no banco:', err);
             return res.status(500).json({ success: false, message: 'Erro no servidor!' });
@@ -548,14 +548,15 @@ app.post('/pessoascasa', (req, res) => {
 
 // Endpoint para obter o número de pessoas
 app.get('/get-pessoascasa', (req, res) => {
-    const sql = 'SELECT pessoascasa FROM usuario ORDER BY idusuario DESC LIMIT 1';
-    db.query(sql, (err, results) => {
+    const userId = req.session.usuario.idusuario;
+    const sql = 'SELECT pessoascasa FROM usuario WHERE idusuario = ?';
+    db.query(sql, [userId],(err, results) => {
         if (err) {
             console.error('Erro ao buscar no banco:', err);
             return res.status(500).json({ success: false, message: 'Erro no servidor!' });
         }
         if (results.length > 0) {
-            res.json({ pessoas: results[0].quantidade });
+            res.json({ pessoas: results[0].pessoascasa });
         } else {
             res.json({ pessoas: 1 }); // Valor padrão se nada estiver no banco
         }

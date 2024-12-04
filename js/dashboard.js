@@ -202,14 +202,14 @@ document.addEventListener('DOMContentLoaded', function () {
           const chart1Data = {
             labels: filteredData2.map(row => row.Mês), // Exemplo de coluna "Mês"
             datasets: [{
-              label: "Gastos",
+              label: "Geração de energia da rua em kW",
               data: sheetData.map(row => row.Gastos), // Exemplo de coluna "Gastos"
               backgroundColor: "#0d6efd",
               borderColor: 'transparent',
               borderWidth: 2.5,
               barPercentage: 0.4,
             }, {
-              label: "Economia",
+              label: "Total economizado na casa em R$",
               startAngle: 2,
               data: sheetData.map(row => row.Economia), // Exemplo de coluna "Economia"
               backgroundColor: "#dc3545",
@@ -221,18 +221,10 @@ document.addEventListener('DOMContentLoaded', function () {
           const chart2Data = {
             labels: filteredData2.map(row => row.Mês),
             datasets: [{
-              label: "Tomadas",
+              label: "Consumo",
               data: filteredData2.map(row => row.Tomadas),
               lineTension: 0.2,
               borderColor: '#d9534f',
-              borderWidth: 1.5,
-              showLine: true,
-              backgroundColor: 'transparent'
-            },{
-              label: "Lâmpadas",
-              data: filteredData2.map(row => row.Lampadas),
-              lineTension: 0.2,
-              borderColor: '#ffc107',
               borderWidth: 1.5,
               showLine: true,
               backgroundColor: 'transparent'
@@ -281,7 +273,7 @@ document.addEventListener('DOMContentLoaded', function () {
             labels: filteredData .map(row => row.Estações),
               datasets: [{
               label: "Verão",
-              data: filteredData.map(row => row.GastoE),
+              data: filteredData.map(row => Math.round(row.GastoE)),
               backgroundColor: [
                 'rgb(247, 110, 19)',
                 'rgba(247, 231, 19, 0.932)',
