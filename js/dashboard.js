@@ -4,8 +4,10 @@
 
 'use strict'
 
-function $(selector) {
-  return document.querySelector(selector)
+
+
+function query(selector) {
+  return document.querySelector(selector);
 }
 
 function find(el, selector) {
@@ -54,9 +56,9 @@ window.addEventListener('resize', function () {
 });
 
 // dropdown menu in the side nav
-var slideNavDropdown = $('.sidebar-dropdown');
+var slideNavDropdown = query('.sidebar-dropdown');
 
-$('.sidebar .categories').addEventListener('click', function (event) {
+query('.sidebar .categories').addEventListener('click', function (event) {
   const item = event.target.closest('.has-dropdown')
 
   // Verifica se o item clicado é o link de upload
@@ -93,7 +95,7 @@ $('.sidebar .categories').addEventListener('click', function (event) {
   }
 });
 
-$('.sidebar .close-aside').addEventListener('click', function () {
+query('.sidebar .close-aside').addEventListener('click', function () {
   $(`#${this.dataset.close}`).classList.add('show-sidebar')
   wrapper.classList.remove('margin')
 })
@@ -401,4 +403,142 @@ document.addEventListener('DOMContentLoaded', function () {
     }
   });
 });
+
+// chat
+/*
+var $messages = query('.messages-content'),
+    d, h, m,
+    i = 0;
+
+    window.addEventListener('load', function () {
+      const messagesContainer = document.querySelector('.mCSB_container');
+      if (!messagesContainer) {
+        console.error('Elemento .mCSB_container não encontrado');
+        return; // Retorna caso o elemento não seja encontrado
+      }
+    
+      // Lógica de rolagem para o final
+      const messages = document.querySelector('.messages');
+      if (messages) {
+        messages.scrollTop = messages.scrollHeight;
+      }
+    
+      setTimeout(function () {
+        fakeMessage(); // Chama a função para simular uma mensagem
+      }, 100);
+    });
+
+    function fakeMessage() {
+      const messageInput = document.querySelector('.message-input');
+      if (messageInput && messageInput.value !== '') {
+        return false;
+      }
+    
+      // Cria a mensagem de "carregando"
+      const loadingMessage = document.createElement('div');
+      loadingMessage.className = 'message loading new';
+      loadingMessage.innerHTML = `
+        <figure class="avatar">
+          <img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/156381/profile/profile-80.jpg" />
+        </figure>
+        <span></span>
+      `;
+      
+      // Verifica se o container de mensagens existe antes de adicionar a nova mensagem
+      const messagesContainer = document.querySelector('.mCSB_container');
+      if (messagesContainer) {
+        messagesContainer.appendChild(loadingMessage);
+        updateScrollbar();
+      } else {
+        console.error('Elemento .mCSB_container não encontrado durante fakeMessage');
+      }
+    
+      setTimeout(function () {
+        loadingMessage.remove();
+        const newFakeMessage = document.createElement('div');
+        newFakeMessage.className = 'message new';
+        newFakeMessage.innerHTML = `
+          <figure class="avatar">
+            <img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/156381/profile/profile-80.jpg" />
+          </figure>
+          ${Fake[i]}
+        `;
+        if (messagesContainer) {
+          messagesContainer.appendChild(newFakeMessage);
+          newFakeMessage.classList.add('new');
+          setDate();
+          updateScrollbar();
+        } else {
+          console.error('Elemento .mCSB_container não encontrado ao adicionar a mensagem falsa');
+        }
+        i++;
+      }, 1000 + (Math.random() * 20) * 100);
+    }
+    
+
+
+// Função para rolar até o final da área de mensagens
+function updateScrollbar() {
+  const messages = document.querySelector('.messages');
+  if (messages) {
+    // Rola automaticamente para o final
+    messages.scrollTop = messages.scrollHeight;
+  }
+}
+
+function setDate() {
+  const d = new Date();
+  const m = d.getMinutes();
+  const timestamp = document.createElement('div');
+  timestamp.className = 'timestamp';
+  timestamp.textContent = `${d.getHours()}:${m}`;
+  const lastMessage = document.querySelector('.message:last-child');
+  if (lastMessage) {
+    lastMessage.appendChild(timestamp);
+  }
+}
+
+function insertMessage() {
+  const msg = document.querySelector('.message-input').value;
+  if (msg.trim() === '') {
+    return false;
+  }
+  
+  const newMessage = document.createElement('div');
+  newMessage.className = 'message message-personal';
+  newMessage.textContent = msg;
+  document.querySelector('.mCSB_container').appendChild(newMessage);
+  setDate();
+  document.querySelector('.message-input').value = null;
+  updateScrollbar();
+
+  setTimeout(function () {
+    fakeMessage();
+  }, 1000 + (Math.random() * 20) * 100);
+}
+
+query('.message-submit').addEventListener('click', function () {
+  insertMessage();
+});
+
+window.addEventListener('keydown', function (e) {
+  if (e.which === 13) { // Código da tecla Enter
+    insertMessage();
+    return false; // Previne o comportamento padrão
+  }
+});
+
+var Fake = [
+  'Olá, como posso ajudar?',
+  'Irei encaminhar um atendente para atender sua solicitação.',
+  'Obrigado pela paciência!',
+  'Aguarde um momento...',
+  'Aguarde um momento...',
+  'Aguarde um momento...',
+  'Aguarde um momento...',
+  'Aguarde um momento...',
+  'Aguarde um momento...'
+]
+
+*/
 

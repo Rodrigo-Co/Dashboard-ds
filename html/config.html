@@ -25,8 +25,6 @@
         </div>
         <div class="expand-menu nav flex-column">
             <a href="#" class="nav-link active mt-auto" id="profile-link"><i class="far fa-user-circle"></i> Profile</a>
-            <a href="#" class="nav-link" id="notifications-link"><i class="far fa-bell"></i> Notifications</a>
-            <a href="#" class="nav-link" id="billing-link"><i class="far fa-file-alt"></i> Billing Info</a>
             <a href="#" class="nav-link mb-auto" id="general-link"><i class="fas fa-cogs"></i> General</a>
         </div>
     
@@ -34,32 +32,13 @@
             <div class="col-md-3 d-none d-md-block" style="height:100%">
                 <div class="container-fluid nav sidebar flex-column">
                     <a href="#" class="nav-link active mt-auto" id="profile-link-sidebar"><i class="far fa-user-circle"></i> Profile</a>
-                    <a href="#" class="nav-link" id="notifications-link-sidebar"><i class="far fa-bell"></i> Notifications</a>
-                    <a href="#" class="nav-link" id="billing-link-sidebar"><i class="far fa-file-alt"></i> Billing Info</a>
                     <a href="#" class="nav-link mb-auto" id="general-link-sidebar"><i class="fas fa-cogs"></i> General</a>
                 </div>
             </div>
     
 
             
-            <!-- General Settings -->
-            <div class="container content" id="general-content" >
-                <h2 class="mt-5 mb-5">Configurações</h2>
-                <form>
-                    <div class="form-group">
-                        <label for="pessoascasa">Quantas pessoas há em sua casa:</label>
-                        <input id="pessoascasa" class="form-control">
-                    </div>
-                    <div class="row mt-5">
-                        <div class="col">
-                            <button type="button" class="btn btn-primary btn-block">Save Changes</button>
-                        </div>
-                        <div class="col">
-                            <button type="button" class="btn btn-default btn-block">Cancel</button>
-                        </div>
-                    </div>
-                </form>
-            </div>
+            
 
             <div class="col-md-9">
                 <!-- Profile Settings -->
@@ -67,25 +46,39 @@
                     <h2 class="mt-5 mb-5">Perfil</h2>
                     <div class="row">
                         <div class="col-md-3">
-                            <form>
+                            <form id="userForm">
                                 <div class="form-group">
                                     <label for="fullName">Nome</label>
-                                    <input type="text" class="form-control" id="fullName">
+                                    <input type="text" class="form-control" id="fullName" required>
                                 </div>
                                 <div class="form-group">
                                     <label for="email">Email</label>
-                                    <input type="email" class="form-control" id="email">
+                                    <input type="email" class="form-control" id="email" disabled>
                                 </div>
-                                <div class="form-group">
-                                    <label for="pass">Senha</label>
-                                    <input type="password" class="form-control" id="pass">
-                                </div>
+                                <button type="submit" class="btn btn-primary">Enviar</button>
                             </form>
                         </div>
                     </div>
                 </div>
     
-                
+                <!-- General Settings -->
+            <div class="container content" id="general-content" style="display: none;">
+                <h2 class="mt-5 mb-5">Configurações</h2>
+                <form>
+                    <div class="form-group">
+                        <label for="pessoascasa">Quantas pessoas há em sua casa:</label>
+                        <input id="pessoascasa" class="form-control" value="1">
+                    </div>
+                    <div class="row mt-5">
+                        <div class="col">
+                            <button type="button" class="btn btn-primary btn-block save">Save Changes</button>
+                        </div>
+                        <div class="col">
+                            <button type="button" class="btn btn-default btn-block">Cancel</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
     
                 <!-- Add other sections like Notifications, Billing Info as needed -->
             </div>
@@ -109,22 +102,30 @@
     <!-- partial -->
 
     <script>
+        document.addEventListener('DOMContentLoaded', function () {
+    // Obtém os parâmetros da URL
+    const params = new URLSearchParams(window.location.search);
+    const content = params.get('content');
+
+    // Oculta todos os containers
+    document.querySelectorAll('.content').forEach(div => div.style.display = 'none');
+
+    // Mostra o container correspondente ao parâmetro
+    if (content === 'general') {
+        document.getElementById('general-content').style.display = 'block';
+    } else if (content === 'profile') {
+        document.getElementById('profile-content').style.display = 'block';
+    } else {
+        // Exibir um padrão ou mensagem de erro
+        document.getElementById('general-content').style.display = 'block';
+    }
+});
         
         $(document).ready(function () {
         // Evento de clique nos links
         $('#profile-link, #profile-link-sidebar').on('click', function (e) {
             e.preventDefault();
             showContent('profile');
-        });
-
-        $('#notifications-link, #notifications-link-sidebar').on('click', function (e) {
-            e.preventDefault();
-            showContent('notifications');
-        });
-
-        $('#billing-link, #billing-link-sidebar').on('click', function (e) {
-            e.preventDefault();
-            showContent('billing');
         });
 
         $('#general-link, #general-link-sidebar').on('click', function (e) {
@@ -145,9 +146,90 @@
             $('#' + section + '-link').addClass('active');
         }
 
-        // Inicializa com a seção "profile" visível
-        showContent('general');
+
     });
+
+    window.onload = fetchUserData;
+    
+    document.getElementById('userForm').addEventListener('submit', async (event) => {
+            event.preventDefault(); // Impede o comportamento padrão do formulário
+
+            const fullName = document.getElementById('fullName').value;
+
+            try {
+                const response = await fetch('/update-perfil', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ name: fullName })
+                });
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    alert('Sucesso');
+                } else {
+                    alert('Falha');
+                }
+            } catch (error) {
+                console.error('Erro ao enviar a requisição:', error);
+                alert('Erro ao conectar com o servidor');
+            }
+        });
+
+    function fetchUserData() {
+            fetch('http://localhost:3300/getData', { 
+                method: 'GET',
+                credentials: 'include' // Include session cookies
+            })
+            .then(function(response) {
+                if (!response.ok) {
+                    return response.json().then(function(error) {
+                        throw new Error(error.error || 'Falha ao obter dados do usuário.');
+                    });
+                }
+                return response.json();
+            })
+            .then(function(userData) {
+                document.getElementById('fullName').value = userData.nome;
+                document.getElementById('email').value = userData.email;
+            })
+            .catch(function(error) {
+                alert(error.message);
+                console.error('Erro ao carregar dados do usuário:', error);
+            });
+        }
+
+        document.querySelector('.save').addEventListener('click', () => {
+    const value = document.getElementById('pessoascasa').value;
+
+    fetch('/pessoascasa', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ pessoascasa: value })
+    })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert('Dados salvos com sucesso!');
+            } else {
+                alert('Erro ao salvar os dados!');
+            }
+        })
+        .catch(err => console.error('Erro ao enviar dados:', err));
+});
+
+document.addEventListener('DOMContentLoaded', () => {
+    fetch('/get-pessoascasa')
+        .then(response => response.json())
+        .then(data => {
+            if (data.pessoas !== undefined) {
+                document.getElementById('pessoascasa').textContent = data.pessoas;
+            }
+        })
+        .catch(err => console.error('Erro ao obter dados:', err));
+});
     </script>
 </body>
 

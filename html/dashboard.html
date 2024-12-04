@@ -4,11 +4,15 @@
   <meta charset="UTF-8">
   <title>Dashboard</title>
   <link rel='stylesheet' href='https://unicons.iconscout.com/release/v3.0.6/css/line.css'><link rel="stylesheet" href="./dashboard.css">
+  <link rel="stylesheet" href="./style.css">
   <!-- AdminLTE CSS -->
 <link rel='stylesheet' href='https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css'>
 <link rel="stylesheet" href='https://cdn.jsdelivr.net/npm/admin-lte@3.2.0/dist/css/adminlte.min.css'>
 <!-- Font Awesome -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css">
+<link rel='stylesheet' href='https://fonts.googleapis.com/css?family=Open+Sans'>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/malihu-custom-scrollbar-plugin/3.1.5/jquery.mCustomScrollbar.min.css">
 </head>
 <body>
 <!-- partial:index.partial.html -->
@@ -62,7 +66,7 @@
     </li>
     
     <li class="">
-      <i class="uil-setting"></i><a href="/config.html"> Configurações</a>
+      <i class="uil-setting"></i><a href="/config.html?content=general"> Configurações</a>
     </li>
     <li class="">
       <i class="uil-map-marker"></i><a target="_blank" href="https://www.google.com/maps/place/Salvador+-+BA/@-12.9146545,-38.4474086,24187m/data=!3m1!1e3!4m6!3m5!1s0x716037ca23ca5b3:0x1b9fc7912c226698!8m2!3d-12.9777334!4d-38.501648!16zL20vMDl3d2xq?entry=ttu&g_ep=EgoyMDI0MTEyNC4xIKXMDSoASAFQAw%3D%3D"> Mapa</a>
@@ -101,10 +105,10 @@
             </ul>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="#"><i class="uil-comments-alt"></i><span>0</span></a>
+            <a class="nav-link" href="https://mail.google.com/mail/?view=cm&fs=1&to=ecobiogas@gmail.com" target="_blank"><i class="uil-comments-alt"></i></a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="#"><i class="uil-bell"></i><span>0</span></a>
+            <a class="nav-link" href="#"><i class="uil-bell"></i><span>3</span></a>
           </li>
           <li class="nav-item">
             <a class="nav-link" href="#">
@@ -115,6 +119,26 @@
       </div>
     </div>
   </nav>
+
+  <!-- 
+    <div class="chat">
+      <div class="chat-title">
+        <h1>Fabio Ottaviani</h1>
+        <h2>Supah</h2>
+        <figure class="avatar">
+          <img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/156381/profile/profile-80.jpg" /></figure>
+        </div>
+        <div class="messages">
+          <div class="messages-content"></div>
+        </div>
+        <div class="message-box">
+          <textarea type="text" class="message-input" placeholder="Type message..."></textarea>
+      <button type="submit" class="message-submit">Send</button>
+    </div>
+  
+  </div>
+  <div class="bg"></div>
+  -->
 
   <div class="p-4">
     <div class="welcome">
@@ -153,7 +177,7 @@
             <i class="uil-users-alt fs-2 text-center bg-success rounded-circle"></i>
             <div class="ms-3">
               <div class="d-flex align-items-center">
-                <h3 class="mb-0 numerosstats">4</h3> <span class="d-block ms-2">Moradores</span>
+                <h3 class="mb-0 numerosstats" id="pessoasnacasa">4</h3> <span class="d-block ms-2">Moradores</span>
               </div>
               <p class="fs-normal mb-0">Quantidade de moradores da casa</p>
             </div>
@@ -306,18 +330,22 @@
 <!-- partial -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.bundle.js"></script>
   
-<script  src="./dashboard.js"></script>
 
-  <!-- jQuery -->
-  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-  
-  <!-- Bootstrap (depende de jQuery) -->
-  <script src='https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.bundle.min.js'></script>
+<!-- jQuery -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.1/xlsx.full.min.js"></script>
+<!-- Bootstrap (depende de jQuery) -->
+<script src='https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.bundle.min.js'></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.1/xlsx.full.min.js"></script>
 
 <!-- AdminLTE -->
 <script src="https://cdn.jsdelivr.net/npm/admin-lte@3.2.0/dist/js/adminlte.min.js"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/malihu-custom-scrollbar-plugin/3.1.5/jquery.mCustomScrollbar.concat.min.js"></script>
+
+<script  src="./dashboard.js"></script>
+
 
 <script>
   // Requisição para obter o número de arquivos na pasta uploads
@@ -362,6 +390,7 @@
       });
   });
 
+
   document.getElementById('logoutButton').addEventListener('click', function() {
     fetch('/logout', {
         method: 'POST',
@@ -395,7 +424,7 @@ document.getElementById('conta').addEventListener('click', function (e) {
     .then(data => {
       if (data.success) {
         // Usuário está logado, redireciona para a página "Minha Conta"
-        window.location.href = '/config.html';
+        window.location.href = '/config.html?content=profile';
       } else {
         // Usuário não está logado, redireciona para a página de login
         window.location.href = '/login.html';
@@ -407,6 +436,20 @@ document.getElementById('conta').addEventListener('click', function (e) {
       window.location.href = '/login.html';
     });
 }
+
+document.addEventListener('DOMContentLoaded', () => {
+    fetch('/get-pessoascasa')
+        .then(response => response.json())
+        .then(data => {
+            if (data.pessoas !== undefined) {
+                document.getElementById('pessoasnacasa').textContent = data.pessoas;
+            }
+        })
+        .catch(err => console.error('Erro ao obter dados:', err));
+});
+
+//chat
+
 
 </script>
 </body>

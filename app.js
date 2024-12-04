@@ -87,12 +87,16 @@ passport.use(
                     const insertQuery = 'INSERT INTO usuario (nome, email) VALUES (?, ?)';
                     if (email && name) {
                         db.query(insertQuery, [name, email], (err, result) => {
-                            if (err) return done(err);
-                    
+                            if (err) {
+                            console.error('Erro ao inserir usuário no banco de dados:', err);
+                            return done(err);
+                        }
+        
                             const novoUsuario = { idusuario: result.insertId, nome: name, email: email };
                             return done(null, novoUsuario);
                         });
                     } else {
+                        console.error('Nome ou email não disponíveis para cadastro.');
                         return done(new Error('Dados insuficientes para cadastro.'));
                     }
                 }
@@ -102,8 +106,21 @@ passport.use(
 );
 
 // Serializar e desserializar o usuário na sessão
-passport.serializeUser((user, done) => done(null, user));
-passport.deserializeUser((user, done) => done(null, user));
+passport.serializeUser((user, done) => {
+    done(null, user.idusuario); // Use o ID do usuário
+});
+
+passport.deserializeUser((id, done) => {
+    const query = 'SELECT * FROM usuario WHERE idusuario = ?';
+    db.query(query, [id], (err, results) => {
+        if (err) return done(err);
+        if (results.length > 0) {
+            done(null, results[0]);
+        } else {
+            done(new Error('Usuário não encontrado.'));
+        }
+    });
+});
 
 // Middleware de sessão
 app.use(passport.initialize());
@@ -113,11 +130,17 @@ app.use(passport.session());
 app.get('/auth/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
 
 // Rota de callback do Google após autenticação
-app.get(
-    '/auth/google/callback',
-    passport.authenticate('google', { failureRedirect: '/' }),
+app.get('/auth/google/callback', 
+    passport.authenticate('google', { failureRedirect: '/login' }),
     (req, res) => {
-        // Redirecionar o usuário após login bem-sucedido
+        // Salvando o usuário na sessão
+        req.session.usuario = {
+            idusuario: req.user.idusuario,
+            nome: req.user.nome,
+            email: req.user.email,
+        };
+
+        // Redirecionar após login
         res.redirect('/');
     }
 );
@@ -131,12 +154,15 @@ app.get('/dashboard', (req, res) => {
     }
 });
 
+const ensureAuthenticated = (req, res, next) => {
+    if (req.session.usuario) {
+        return next();
+    }
+    res.status(401).json({ success: false, message: 'Você precisa estar logado.' });
+};
+
 
     app.get('/user/profile', (req, res) => {
-        // Verifique se o usuário está logado
-        if (!req.session.usuario) {
-            return res.status(401).json({ success: false, message: 'Você precisa estar logado.' });
-        }
 
         const userId = req.session.usuario.idusuario;
 
@@ -150,8 +176,7 @@ app.get('/dashboard', (req, res) => {
             }
 
             if (result.length > 0) {
-                const userData = result[0];
-                const userName = userData.nome;
+                const userName = result[0].nome;
 
                 return res.json({
                     success: true,
@@ -431,7 +456,7 @@ app.get('/verificarLogin', (req, res) => {
 });
 
 app.get('/getData', (req, res) => {
-    const userId = req.session.usuario?.idusuario; // Supondo que o ID do usuário está na sessão (ou substitua por JWT, etc.)
+    const userId = req.session.usuario?.idusuario;
     
     if (!userId) {
         return res.status(401).json({ error: 'Usuário não autenticado' });
@@ -458,6 +483,84 @@ app.get('/getData', (req, res) => {
     });
 });
 
+// Routes
+app.post('/submit', (req, res) => {
+    const { fullName, email } = req.body;
+
+    if (!fullName || !email) {
+        return res.status(400).json({ message: 'Preencha todos os campos.' });
+    }
+
+    const query = 'INSERT INTO usuario (nome, email) VALUES (?, ?)';
+    db.query(query, [fullName, email], (err, results) => {
+        if (err) {
+            console.error('Erro ao inserir no banco de dados:', err);
+            return res.status(500).json({ message: 'Erro ao cadastrar o usuário.' });
+        }
+        res.status(201).json({ message: 'Dados do usuário cadastrados com sucesso.' });
+    });
+});
+
+app.post('/update-perfil', (req, res) => {
+    const newUserName = req.body.name;
+    const userId = req.session.usuario.idusuario; // Supondo que você tenha o ID do usuário na sessão
+  
+    if (!userId) {
+      return res.status(401).json({ success: false, message: 'Usuário não autenticado' });
+    }
+  
+    const query = 'UPDATE usuario SET nome = ? WHERE idusuario = ?';
+  
+    db.query(query, [newUserName, userId], (err, results) => {
+      if (err) {
+        console.error('Erro ao atualizar os dados:', err);
+        return res.status(500).json({ success: false, message: 'Erro ao atualizar os dados' });
+      }
+  
+      if (results.affectedRows > 0) {
+        res.json({ success: true, message: 'Dados atualizados com sucesso' });
+      } else {
+        res.status(404).json({ success: false, message: 'Usuário não encontrado' });
+      }
+    });
+  });
+
+
+  /// Endpoint para salvar o número de pessoas
+app.post('/pessoascasa', (req, res) => {
+    const { pessoascasa } = req.body;
+
+    if (!pessoascasa || isNaN(pessoascasa)) {
+        return res.status(400).json({ success: false, message: 'Número inválido!' });
+    }
+
+    // Insere ou atualiza o valor no banco
+    const sql = `INSERT INTO usuario (pessoascasa) VALUES (?) 
+                 ON DUPLICATE KEY UPDATE pessoascasa = VALUES(pessoascasa)`;
+    db.query(sql, [pessoascasa], (err) => {
+        if (err) {
+            console.error('Erro ao salvar no banco:', err);
+            return res.status(500).json({ success: false, message: 'Erro no servidor!' });
+        }
+        res.json({ success: true });
+    });
+});
+
+// Endpoint para obter o número de pessoas
+app.get('/get-pessoascasa', (req, res) => {
+    const sql = 'SELECT pessoascasa FROM usuario ORDER BY idusuario DESC LIMIT 1';
+    db.query(sql, (err, results) => {
+        if (err) {
+            console.error('Erro ao buscar no banco:', err);
+            return res.status(500).json({ success: false, message: 'Erro no servidor!' });
+        }
+        if (results.length > 0) {
+            res.json({ pessoas: results[0].quantidade });
+        } else {
+            res.json({ pessoas: 1 }); // Valor padrão se nada estiver no banco
+        }
+    });
+});
 app.listen(port, () => {
     console.log(`Servidor rodando na porta ${port}`);
 });
