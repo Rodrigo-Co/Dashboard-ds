@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="./relatorio.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.29/jspdf.plugin.autotable.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css">
+<link rel='stylesheet' href='https://fonts.googleapis.com/css?family=Open+Sans'>
+<link rel='stylesheet' href='https://unicons.iconscout.com/release/v3.0.6/css/line.css'>
+</head>
+<body class="h-full">
+    <div class="min-h-full">
+        <nav class="bg-gray-800">
+            <a href="/dashboard.html" style="color: aliceblue; border-radius: 10px; background-color: rgb(105, 105, 105); padding: 10px; margin-top: 20px; margin-left: 20px;">VOLTAR</a>
+            
+            <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+                
+                <div class="flex h-16 items-center justify-between">
+                    <div class="flex items-center">
+                        <div class="flex-shrink-0">
+                            
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </nav>
+        
+        <header class="bg-white shadow">
+            <div class="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
+                <h1 class="text-3xl font-bold tracking-tight text-gray-900">Controle de Gastos</h1>
+            </div>
+        </header>
+
+        <main>
+            <div class="mx-auto max-w-7xl py-6 sm:px-6 lg:px-8">
+                <div class="px-4 py-6 sm:px-0">
+                    <div class="rounded-lg border-4 border-dashed border-gray-200 p-4 sm:p-6 lg:p-8">
+                        <!-- Formulário de Adicionar Gasto -->
+                        <section class="mb-8">
+                            <h2 class="text-xl font-semibold mb-4">Selecionar Mês</h2>
+                                <div class="grid grid-cols-1 gap-4 sm:grid-cols-4">
+                                    <input type="month" id="mesSelecionado" class="input">
+                                    <button id="btnBuscar" type="button" class="btn-primary">Gerar Relatório</button>
+                                </div>
+                        </section>
+
+                        <!-- Lista de Gastos -->
+                        <section class="mb-8">
+                            <h2 class="text-xl font-semibold mb-4">Relatório do mês</h2>
+                            <div class="overflow-x-auto">
+                                <table id="tabelaGastos" class="min-w-full divide-y divide-gray-300">
+                                    <thead>
+                                        <tr>
+                                            <th class="table-header">Meses</th>
+                                            <th class="table-header">Energia gerada</th>
+                                            <th class="table-header">Valor da energia economizada</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="divide-y divide-gray-200">
+                                        <!-- Linhas da tabela serão adicionadas dinamicamente -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </section>
+
+                       
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script>
+ document.getElementById('btnBuscar').addEventListener('click', function () {
+    const mesSelecionado = document.getElementById('mesSelecionado').value; // "YYYY-MM"
+    if (!mesSelecionado) {
+        alert('Por favor, selecione um mês.');
+        return;
+    }
+
+    // Converte o "YYYY-MM" para o nome do mês (ex.: "Janeiro")
+    const dataSelecionada = new Date(mesSelecionado.split('-')[1]);
+    const mesSelecionadoNome = dataSelecionada.toLocaleDateString('pt-BR', {
+        month: 'long',
+    });
+
+    fetch('/uploaded-file')
+        .then(response => {
+            if (response.ok) {
+                return response.blob(); // Resposta será um Blob (arquivo binário)
+            } else {
+                throw new Error('Nenhum arquivo encontrado');
+            }
+        })
+        .then(blob => {
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                const data = e.target.result;
+                const workbook = XLSX.read(data, { type: 'binary' });
+
+                // Processa a primeira aba do arquivo Excel
+                const sheetName = workbook.SheetNames[0];
+                const sheetData = XLSX.utils.sheet_to_json(workbook.Sheets[sheetName]);
+
+                // Filtra os dados com base apenas no nome do mês
+                const dadosFiltrados = sheetData.filter(row => {
+                    // Supondo que a coluna "Mês" tenha valores como "Janeiro", "Fevereiro", etc.
+                    return row['Mês']?.toLowerCase() === mesSelecionadoNome.toLowerCase();
+                });
+
+                atualizarTabela(dadosFiltrados);
+            };
+
+            reader.readAsBinaryString(blob);
+        })
+        .catch(error => {
+            console.error('Erro ao processar o arquivo:', error);
+            alert('Erro ao processar o arquivo. Tente novamente.');
+        });
+});
+
+// Função para atualizar a tabela
+function atualizarTabela(dados) {
+    const tabela = document.querySelector('#tabelaGastos tbody');
+    tabela.innerHTML = ''; // Limpa a tabela antes de adicionar os novos dados
+
+    if (dados.length === 0) {
+        tabela.innerHTML = '<tr><td colspan="3" class="text-center">Nenhum dado encontrado para o mês selecionado.</td></tr>';
+        return;
+    }
+
+    dados.forEach(dado => {
+        const linha = document.createElement('tr');
+        linha.innerHTML = `
+            <td class="table-cell">${dado['Mês']}</td>
+            <td class="table-cell">${dado['Gastos'] || 'N/A'}kW</td>
+            <td class="table-cell">R$${dado['Economia'] || 'N/A'}</td>
+        `;
+        tabela.appendChild(linha);
+    });
+}
+
+
+
+    </script>
+</body>
+</html>
