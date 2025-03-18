@@ -44,7 +44,7 @@ body {
  -- Sidebar
 -------------------------------- */
 .sidebar {
-	background-color: rgb(0, 28, 80);
+	background-color: rgb(5, 29, 0);
 	width: var(--sidebar-width);
 	transition: all .3s ease-in-out;
 	transform: translateX(0);
@@ -53,7 +53,7 @@ body {
 
 #sidebar-perfback{
 	position: absolute;
-	background-color: rgb(0, 0, 75);
+	background-color: rgb(7, 41, 0);
 	width: 100%;
 	height: 135px;
 	margin-top: -20px;
@@ -168,7 +168,7 @@ body {
 
 .welcome .content {
 	
-	background-color: rgb(0, 0, 75);
+	background-color: rgb(185, 102, 6);
 }
 
 .welcome p {
@@ -293,7 +293,7 @@ body {
 -------------------------------- */
 
 .navbar {
-	background-color: rgb(0, 0, 75) !important;
+	background-color: rgb(7, 41, 0) !important;
 	border: none !important;
 }
 .navbar .dropdown-menu {

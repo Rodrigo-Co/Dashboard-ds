@@ -26,7 +26,7 @@ app.use(bodyParser.json());
 const db = mysql.createConnection({
     host: 'localhost',
     user: 'root', // Substitua pelo seu usuário do MySQL
-    password: 'rodrigo', // Substitua pela sua senha do MySQL
+    password: 'cimatec', // Substitua pela sua senha do MySQL
     database: 'bancodashboard', // Nome do seu banco de dados
 });
 
