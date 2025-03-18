@@ -202,14 +202,14 @@ document.addEventListener('DOMContentLoaded', function () {
           const chart1Data = {
             labels: filteredData2.map(row => row.Mês), // Exemplo de coluna "Mês"
             datasets: [{
-              label: "Geração de energia da rua em kW",
+              label: "Temperatura em °C",
               data: sheetData.map(row => row.Gastos), // Exemplo de coluna "Gastos"
               backgroundColor: "#0d6efd",
               borderColor: 'transparent',
               borderWidth: 2.5,
               barPercentage: 0.4,
             }, {
-              label: "Total economizado na casa em R$",
+              label: "Umidade em %",
               startAngle: 2,
               data: sheetData.map(row => row.Economia), // Exemplo de coluna "Economia"
               backgroundColor: "#dc3545",
@@ -221,7 +221,7 @@ document.addEventListener('DOMContentLoaded', function () {
           const chart2Data = {
             labels: filteredData2.map(row => row.Mês),
             datasets: [{
-              label: "Consumo",
+              label: "Qualidade do ar em %",
               data: filteredData2.map(row => row.Tomadas),
               lineTension: 0.2,
               borderColor: '#d9534f',
@@ -233,7 +233,7 @@ document.addEventListener('DOMContentLoaded', function () {
           const chart3Data = {
             labels: filteredData2.map(row => row.Mês),
             datasets: [{
-              label: "2023",
+              label: "Temperatura",
               data: sheetData.map(row => row.y2023),
               lineTension: 0,
               borderColor: '#d9534f',
@@ -241,7 +241,7 @@ document.addEventListener('DOMContentLoaded', function () {
               showLine: true,
               backgroundColor: 'transparent'
             },{
-              label: "2022",
+              label: "Umidade",
               data: sheetData.map(row => row.y2022),
               lineTension: 0,
               borderColor: '#00FF00',
@@ -249,7 +249,7 @@ document.addEventListener('DOMContentLoaded', function () {
               showLine: true,
               backgroundColor: 'transparent'
             },{
-              label: "2021",
+              label: "Qualidade do ar",
               data: sheetData.map(row => row.y2021),
               lineTension: 0,
               borderColor: '#00FFFF',
@@ -257,7 +257,7 @@ document.addEventListener('DOMContentLoaded', function () {
               showLine: true,
               backgroundColor: 'transparent'
             },{
-              label: "2020",
+              label: "Risco de incêndio",
               data: sheetData.map(row => row.y2020),
               lineTension: 0,
               borderColor: '#3b3d56',
@@ -533,4 +533,42 @@ var Fake = [
 ]
 
 */
+
+async function atualizarDados() {
+    try {
+        const resposta = await fetch("http://localhost:3300/dados");
+        const dados = await resposta.json();
+
+        if (!dados) throw new Error("Nenhum dado recebido.");
+
+        // Seleciona os elementos
+        const tempElem = document.getElementById("temperatura");
+        const umidElem = document.getElementById("umidade");
+        const arElem = document.getElementById("qualidade");
+        const timeElem = document.getElementById("timestamp");
+
+        // Verifica se os elementos existem antes de modificar
+        if (tempElem) tempElem.innerText = `${dados.temperatura}°C`;
+        if (umidElem) umidElem.innerText = `${dados.umidade}%`;
+        if (arElem) arElem.innerText = `${dados.qualidade_do_ar}%`;
+        if (timeElem) {
+          const data = new Date(dados.timestamp);
+          let horas = data.getHours() + 3; // Adiciona 3 horas
+          const minutos = data.getMinutes().toString().padStart(2, "0");
+
+          // Garante que as horas fiquem no formato correto (0-23)
+          if (horas >= 24) horas -= 24;
+          if (horas < 0) horas += 24;
+
+          timeElem.innerText = `${horas.toString().padStart(2, "0")}:${minutos}h`;
+      }
+
+    } catch (erro) {
+        console.error("Erro ao buscar dados:", erro);
+    }
+}
+
+// Executa a função quando a página carregar
+setInterval(atualizarDados, 60000);
+document.addEventListener("DOMContentLoaded", atualizarDados);
 

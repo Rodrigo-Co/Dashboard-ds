@@ -12,6 +12,8 @@ const fs = require('fs');
 const XLSX = require('xlsx');
 const passport = require('passport');
 const GoogleStrategy = require('passport-google-oauth20').Strategy;
+const cors = require('cors');
+const { createClient } = require('@supabase/supabase-js');
 
 const app = express();
 const port = 3300;
@@ -562,6 +564,29 @@ app.get('/get-pessoascasa', (req, res) => {
         }
     });
 });
+
+app.use(cors());
+const SUPABASE_URL = "https://zgeyiibklawawnycftcj.supabase.co";
+const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpnZXlpaWJrbGF3YXdueWNmdGNqIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc0MTczNTk3OCwiZXhwIjoyMDU3MzExOTc4fQ.7E3_tHVeIxPE3tQWcU26K1jx7cYsyUzWwvfHNpeMGi4";
+const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
+
+app.get("/dados", async (req, res) => {
+    try {
+        const { data, error } = await supabase
+            .from("sensor_data")
+            .select("*")
+            .order("id", { ascending: false })
+            .limit(1)
+            .single(); // Garantir que sempre retorna um único objeto
+
+        if (error) throw error;
+
+        res.json(data);
+    } catch (err) {
+        res.status(500).json({ erro: "Erro ao buscar dados", detalhe: err.message });
+    }
+});
+
 app.listen(port, () => {
     console.log(`Servidor rodando na porta ${port}`);
 });
